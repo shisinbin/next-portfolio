@@ -1,11 +1,13 @@
+import Section from '@/components/Section';
+import SectionHeading from '@/components/SectionHeading';
 import styles from './aboutpage.module.css';
 
 function AboutPage() {
   return (
-    <>
-      <h1>About Page</h1>
-      <section>This is me.</section>
-    </>
+    <Section>
+      <SectionHeading>About Page</SectionHeading>
+      <p>This is me.</p>
+    </Section>
   );
 }
 

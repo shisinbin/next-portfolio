@@ -1,13 +1,15 @@
+import Link from 'next/link';
+import Section from '@/components/Section';
+import SectionHeading from '@/components/SectionHeading';
 import { getAllProjects } from '@/lib/projects';
 import styles from './workpage.module.css';
-import Link from 'next/link';
 
 async function WorkPage() {
   const projects = await getAllProjects();
 
   return (
-    <section>
-      <h1>Work Page</h1>
+    <Section>
+      <SectionHeading>Work Page</SectionHeading>
       <p>This is my work.</p>
       <ul>
         {projects.map((project) => (
@@ -19,7 +21,7 @@ async function WorkPage() {
           </li>
         ))}
       </ul>
-    </section>
+    </Section>
   );
 }
 

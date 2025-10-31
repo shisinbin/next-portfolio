@@ -2,13 +2,43 @@
   text-decoration: none;
   font-weight: 500;
   color: inherit;
+  /* transition: opacity 0.2s; */
 }
 
 .navLink:hover {
-  text-decoration: underline;
+  /* text-decoration: underline; */
+  /* opacity: 0.7; */
+  position: relative;
 }
 
 .active {
   font-style: italic;
   font-weight: bold;
+  /* position: relative; */
+}
+
+/* .active {
+  color: hsl(200deg 90% 40%);
+  position: relative;
+}
+
+.active::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  height: 2px;
+  width: 100%;
+  background: currentColor;
+  opacity: 0.7;
+} */
+
+.navLink:not(.active):hover::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  height: 2px;
+  width: 100%;
+  background: currentColor;
 }

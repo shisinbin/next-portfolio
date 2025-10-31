@@ -1,11 +1,13 @@
+import Section from '@/components/Section';
+import SectionHeading from '@/components/SectionHeading';
 import styles from './contactpage.module.css';
 
 function ContactPage() {
   return (
-    <section>
-      <h1>Contact Page</h1>
+    <Section>
+      <SectionHeading>Contact Page</SectionHeading>
       <p>Contact me bro.</p>
-    </section>
+    </Section>
   );
 }
 

@@ -1,10 +1,11 @@
-import Image from 'next/image';
+import Section from '@/components/Section';
+import SectionHeading from '@/components/SectionHeading';
 import styles from './homepage.module.css';
 
 export default function HomePage() {
   return (
-    <section>
-      <h1>Homepage</h1>
-    </section>
+    <Section>
+      <SectionHeading>Homepage</SectionHeading>
+    </Section>
   );
 }

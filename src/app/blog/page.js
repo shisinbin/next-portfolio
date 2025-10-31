@@ -1,11 +1,13 @@
+import Section from '@/components/Section';
+import SectionHeading from '@/components/SectionHeading';
 import styles from './blogpage.module.css';
 
 function BlogPage() {
   return (
-    <section>
-      <h1>Blog Page</h1>
+    <Section>
+      <SectionHeading>Blog Page</SectionHeading>
       <p>Blog goes here.</p>
-    </section>
+    </Section>
   );
 }
 

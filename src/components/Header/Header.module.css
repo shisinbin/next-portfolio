@@ -1,16 +1,10 @@
+.wrapper {
+  border-bottom: 1px solid hsl(0deg 0% 85%);
+}
+
 .navList {
   list-style-type: none;
-  padding: 0;
+  padding: 16px 0;
   display: flex;
-  gap: 16px;
-}
-
-.navLink {
-  text-decoration: none;
-  font-weight: 500;
-  color: inherit;
-}
-
-.navLink:hover {
-  text-decoration: underline;
+  gap: 2rem;
 }

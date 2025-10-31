@@ -1,29 +1,26 @@
 import MaxWidthWrapper from '@/components/MaxWidthWrapper';
 import styles from './Header.module.css';
-import Link from 'next/link';
 
-import NavLink from '../NavLink';
+import NavLink from '@/components/NavLink';
+
+const links = [
+  { href: '/', label: 'Home' },
+  { href: '/about', label: 'About' },
+  { href: '/work', label: 'Work' },
+  { href: '/blog', label: 'Blog' },
+  { href: '/contact', label: 'Contact' },
+];
 
 function Header() {
   return (
-    <header>
-      <MaxWidthWrapper as='nav' className={styles.nav}>
+    <header className={styles.wrapper}>
+      <MaxWidthWrapper as='nav'>
         <ul className={styles.navList}>
-          <li>
-            <NavLink href='/'>Home</NavLink>
-          </li>
-          <li>
-            <NavLink href='/about'>About</NavLink>
-          </li>
-          <li>
-            <NavLink href='/work'>Work</NavLink>
-          </li>
-          <li>
-            <NavLink href='/blog'>Blog</NavLink>
-          </li>
-          <li>
-            <NavLink href='/contact'>Contact</NavLink>
-          </li>
+          {links.map(({ href, label }) => (
+            <li key={href}>
+              <NavLink href={href}>{label}</NavLink>
+            </li>
+          ))}
         </ul>
       </MaxWidthWrapper>
     </header>

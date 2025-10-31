@@ -1,6 +1,7 @@
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import { notFound } from 'next/navigation';
-
+import Section from '@/components/Section';
+import SectionHeading from '@/components/SectionHeading';
 import { getProjectBySlug } from '@/lib/projects';
 
 export async function generateMetadata({ params }) {
@@ -25,13 +26,13 @@ async function ProjectPage({ params }) {
   const { frontmatter, content } = project;
 
   return (
-    <section>
-      <h1>{frontmatter.title}</h1>
+    <Section>
+      <SectionHeading>{frontmatter.title}</SectionHeading>
       <time>{frontmatter.date}</time>
       <div>
         <MDXRemote source={content} />
       </div>
-    </section>
+    </Section>
   );
 }
 

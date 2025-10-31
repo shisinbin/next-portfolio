@@ -1,0 +1,11 @@
+/* src/components/SectionHeading/SectionHeading.module.css */
+.heading {
+  font-size: 1.75rem;
+  margin-bottom: var(--space-md);
+}
+
+@media (min-width: 768px) {
+  .heading {
+    font-size: 2rem;
+  }
+}

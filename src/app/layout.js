@@ -3,7 +3,6 @@ import clsx from 'clsx';
 
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import MaxWidthWrapper from '@/components/MaxWidthWrapper';
 
 import '@/assets/styles/globals.css';
 
@@ -34,9 +33,7 @@ export default function RootLayout({ children }) {
     >
       <body>
         <Header />
-        <main>
-          <MaxWidthWrapper>{children}</MaxWidthWrapper>
-        </main>
+        <main>{children}</main>
         <Footer />
       </body>
     </html>

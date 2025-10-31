@@ -89,4 +89,31 @@ code {
 /* THEME VARIABLES */
 html {
   --viewport-padding: 16px;
+  --color-text: hsl(0deg 0% 10%);
+  --color-accent: hsl(200deg 90% 40%);
+  --color-bg: hsl(0deg 0% 100%);
+  --space-xs: 0.5rem;
+  --space-sm: 1rem;
+  --space-md: 2rem;
+  --space-lg: 4rem;
+  --space-xl: 6rem;
+
+  /* Core hues */
+  --hue-accent: 200deg;
+  --hue-gray: 220deg;
+
+  /* Neutral scale */
+  --gray-100: hsl(var(--hue-gray) 20% 95%);
+  --gray-200: hsl(var(--hue-gray) 15% 75%);
+  --gray-400: hsl(var(--hue-gray) 5% 50%);
+  --gray-700: hsl(var(--hue-gray) 10% 30%);
+  --gray-900: hsl(var(--hue-gray) 15% 15%);
+
+  /* Accent */
+  --accent: hsl(var(--hue-accent) 90% 45%);
+
+  /* Base */
+  --color-bg: var(--gray-100);
+  --color-text: var(--gray-900);
+  --color-muted: var(--gray-700);
 }
