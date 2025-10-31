@@ -1,0 +1,6 @@
+.content {
+  display: grid;
+  gap: 1.5rem;
+  max-width: 65ch;
+  line-height: 1.7;
+}

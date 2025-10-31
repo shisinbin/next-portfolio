@@ -10,7 +10,10 @@ async function WorkPage() {
   return (
     <Section>
       <SectionHeading>Work Page</SectionHeading>
-      <p>This is my work.</p>
+      <p>
+        Here&apos;s a collection of projects I&apos;ve worked on -
+        some professional, some personal.
+      </p>
       <ul>
         {projects.map((project) => (
           <li key={project.slug}>

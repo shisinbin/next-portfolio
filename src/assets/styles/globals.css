@@ -67,25 +67,6 @@ h6 {
   isolation: isolate;
 }
 
-/* CUSTOM STYLES */
-body {
-  min-height: 100vh;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-}
-
-body > main {
-  flex: 1;
-}
-
-html {
-  font-family: var(--font-family), system-ui, sans-serif;
-}
-code {
-  font-family: var(--font-family-mono);
-}
-
 /* THEME VARIABLES */
 html {
   --viewport-padding: 16px;
@@ -116,4 +97,25 @@ html {
   --color-bg: var(--gray-100);
   --color-text: var(--gray-900);
   --color-muted: var(--gray-700);
+}
+
+/* CUSTOM STYLES */
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+
+body > main {
+  flex: 1;
+}
+
+html {
+  font-family: var(--font-family), system-ui, sans-serif;
+}
+code {
+  font-family: var(--font-family-mono);
 }
