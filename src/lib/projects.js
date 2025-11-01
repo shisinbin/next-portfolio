@@ -9,23 +9,21 @@ export async function getAllProjects() {
   const fileNames = await fs.readdir(projectsDir);
 
   const projects = await Promise.all(
-    fileNames.map(async (fileName) => {
-      if (!fileName.endsWith('.mdx')) return null;
+    fileNames
+      .filter((name) => name.endsWith('.mdx'))
+      .map(async (fileName) => {
+        const filePath = path.join(projectsDir, fileName);
+        const rawContent = await fs.readFile(filePath, 'utf8');
+        const { data: frontmatter } = matter(rawContent);
 
-      const filePath = path.join(projectsDir, fileName);
-      const rawContent = await fs.readFile(filePath, 'utf8');
-      const { data: frontmatter } = matter(rawContent);
-
-      return {
-        slug: fileName.replace(/\.mdx$/, ''),
-        ...frontmatter,
-      };
-    })
+        return {
+          slug: fileName.replace(/\.mdx$/, ''),
+          ...frontmatter,
+        };
+      })
   );
 
-  return projects
-    .filter(Boolean)
-    .sort((a, b) => new Date(b.date) - new Date(a.date));
+  return projects.sort((a, b) => new Date(b.date) - new Date(a.date));
 }
 
 export const getProjectBySlug = React.cache(async (slug) => {
