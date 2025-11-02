@@ -10,11 +10,11 @@
 }
 
 .accent {
-  color: var(--accent);
+  color: var(--accent-400);
 }
 
 .subtitle {
-  color: var(--color-muted);
+  color: var(--color-text-muted);
   font-size: 1.25rem;
   max-width: 40ch;
   margin-inline: auto;
@@ -24,7 +24,7 @@
 .cta {
   display: inline-block;
   text-decoration: none;
-  background: var(--accent);
+  background: var(--accent-400);
   color: white;
   padding: 0.75rem 1.5rem;
   border-radius: 6px;
@@ -33,5 +33,5 @@
 }
 
 .cta:hover {
-  background: hsl(var(--hue-accent) 90% 35%);
+  background: var(--accent-600);
 }

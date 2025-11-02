@@ -69,34 +69,50 @@ h6 {
 
 /* THEME VARIABLES */
 html {
-  --viewport-padding: 16px;
-  --color-text: hsl(0deg 0% 10%);
-  --color-accent: hsl(200deg 90% 40%);
-  --color-bg: hsl(0deg 0% 100%);
+  /* Spacing */
+  --space-2xs: 0.25rem;
   --space-xs: 0.5rem;
   --space-sm: 1rem;
   --space-md: 2rem;
   --space-lg: 4rem;
   --space-xl: 6rem;
 
+  --viewport-padding: 16px;
+
   /* Core hues */
   --hue-accent: 200deg;
   --hue-gray: 220deg;
 
-  /* Neutral scale */
-  --gray-100: hsl(var(--hue-gray) 20% 95%);
+  /* Grays */
+  /* --gray-100: hsl(var(--hue-gray) 20% 95%);
   --gray-200: hsl(var(--hue-gray) 15% 75%);
   --gray-400: hsl(var(--hue-gray) 5% 50%);
   --gray-700: hsl(var(--hue-gray) 10% 30%);
+  --gray-900: hsl(var(--hue-gray) 15% 15%); */
+  --gray-50: hsl(var(--hue-gray) 20% 97%);
+  --gray-100: hsl(var(--hue-gray) 20% 95%);
+  --gray-200: hsl(var(--hue-gray) 15% 85%);
+  --gray-300: hsl(var(--hue-gray) 12% 70%);
+  --gray-500: hsl(var(--hue-gray) 10% 50%);
+  --gray-700: hsl(var(--hue-gray) 10% 35%);
   --gray-900: hsl(var(--hue-gray) 15% 15%);
 
   /* Accent */
-  --accent: hsl(var(--hue-accent) 90% 45%);
+  --accent-400: hsl(var(--hue-accent) 90% 45%);
+  --accent-500: hsl(var(--hue-accent) 95% 40%);
+  --accent-600: hsl(var(--hue-accent) 100% 35%);
 
-  /* Base */
+  /* Surfaces */
   --color-bg: var(--gray-100);
+  --color-bg-muted: var(--gray-100);
+  --color-surface: var(--gray-50);
+  --color-border: var(--gray-200);
+  --color-card-border: hsl(var(--hue-gray) 12% 70% / 0.3);
+
+  /* Text */
   --color-text: var(--gray-900);
-  --color-muted: var(--gray-700);
+  --color-text-muted: var(--gray-700);
+  --color-text-inverse: white;
 }
 
 /* CUSTOM STYLES */
