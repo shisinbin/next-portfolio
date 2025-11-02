@@ -1,16 +1,10 @@
 .intro {
   margin-bottom: 2rem;
+  max-width: 55ch;
 }
 
 .grid {
+  --grid-gap: 2.5rem;
   list-style: none;
   padding: 0;
-  display: grid;
-  gap: 2rem;
-}
-
-@media (min-width: 768px) {
-  .grid {
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  }
 }

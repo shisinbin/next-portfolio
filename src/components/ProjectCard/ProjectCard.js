@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import styles from './ProjectCard.module.css';
+import Image from 'next/image';
 
 function ProjectCard({ project }) {
   const {
@@ -16,7 +17,7 @@ function ProjectCard({ project }) {
       <Link href={`/work/${slug}`} className={styles.link}>
         {image && (
           <div className={styles.imageWrapper}>
-            <img src={image} alt={`Screenshot of ${title}`} />
+            <Image src={image} alt={`Screenshot of ${title}`} fill />
           </div>
         )}
         <div className={styles.content}>
