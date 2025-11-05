@@ -1,0 +1,22 @@
+.callout {
+  --callout-accent: var(--accent-400);
+  --callout-bg: hsl(from var(--callout-accent) h s l / 0.08);
+
+  border-left: 4px solid var(--callout-accent);
+  background: var(--callout-bg);
+  padding: 1rem 1.25rem;
+  border-radius: 4px;
+  font-size: 1rem;
+  line-height: 1.6;
+  font-style: italic;
+  margin: 1.5rem 0;
+}
+
+.callout strong {
+  /* font-style: normal; */
+  color: var(--callout-accent);
+}
+
+.callout p {
+  margin-bottom: 0 !important;
+}

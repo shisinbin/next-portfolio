@@ -1,0 +1,49 @@
+.date {
+  margin-top: -1.5rem; /* just to tighten up the gap to heading above, fix later */
+}
+
+.content {
+  font-size: 1.25rem;
+  max-width: 72ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.content h1,
+.content h2,
+.content h3,
+.content h4 {
+  line-height: 1.15;
+  margin-top: var(--space-lg);
+  margin-bottom: var(--space-sm);
+  word-wrap: break-word;
+}
+.content h1 {
+  font-size: clamp(1.75rem, 3.5vw, 2.25rem);
+}
+.content h2 {
+  font-size: clamp(1.35rem, 2.6vw, 1.75rem);
+}
+.content h3 {
+  font-size: clamp(1.125rem, 2.1vw, 1.25rem);
+}
+.content p,
+.content ul,
+.content ol {
+  margin-bottom: var(--space-md);
+  max-width: 72ch;
+}
+.content ul,
+.content ol {
+  padding-left: 1.25rem;
+}
+/* .content img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: var(--space-md) auto;
+} */
+.content a {
+  color: var(--color-accent);
+  text-decoration: underline;
+}

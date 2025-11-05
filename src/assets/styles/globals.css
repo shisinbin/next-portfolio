@@ -135,3 +135,9 @@ html {
 code {
   font-family: var(--font-family-mono);
 }
+
+@media (min-width: 560px) {
+  html {
+    --viewport-padding: 24px;
+  }
+}

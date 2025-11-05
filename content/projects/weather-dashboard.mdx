@@ -1,0 +1,87 @@
+---
+title: 'Weather Dashboard'
+date: '2023-01-04'
+description: 'A weather dashboard web app that fetches and displays real-time weather data using multiple public APIs.'
+tech:
+  [
+    'HTML',
+    'CSS',
+    'JavaScript',
+    'Leaflet',
+    'Geoapify',
+    'OpenWeatherMap',
+  ]
+image: '/images/projects/weather-dashboard/cover.png'
+links:
+  live: 'https://chipper-sunflower-aae134.netlify.app/'
+  github: 'https://github.com/shisinbin/weather-dashboard'
+---
+
+## Overview
+
+This was one of my early front-end projects during a web development bootcamp. The app allows users to search for any city in the world and view its current weather and 5-day forecast.
+
+It was designed to improve my understanding of working with APIs and rendering data dynamically in the DOM. I also gained valuable experience structuring JavaScript logic and handling asynchronous operations cleanly.
+
+<Figure
+  src='/images/projects/weather-dashboard/demo.gif'
+  alt='Animated demo of the Weather Dashboard app'
+  caption='Searching for cities and viewing forecasts in the Weather Dashboard.'
+  size='large'
+/>
+
+## Key Features
+
+- Smart autocomplete search powered by **Geoapify**
+- Real-time weather data via **OpenWeatherMap**
+- Interactive map using **Leaflet**
+- Recent searches stored in **localStorage**
+- Responsive layout for both desktop and mobile
+
+## Technical Approach
+
+I initially built the project using **jQuery** to handle API calls and DOM manipulation. Later, I refactored the app to use **vanilla JavaScript**, which taught me a lot about managing asynchronous logic and creating reusable modules.
+
+<Callout>
+  This project helped solidify my understanding of **positioned
+  layout**, event delegation, and modular JavaScript structure.
+</Callout>
+
+Here’s a small example showing how I used async/await to fetch and render data:
+
+```js
+async function fetchWeather(city) {
+  const response = await fetch(url);
+  if (!response.ok) throw new Error('City not found');
+  const data = await response.json();
+  renderWeather(data);
+}
+```
+
+## Challenges & Learnings
+
+- **Asynchronous logic:** learning to handle multiple API requests and error states cleanly
+- **Layout positioning:** understanding how to use relative and absolute positioning effectively
+- **Data presentation:** designing clear, concise weather cards that worked across different screen sizes
+
+<Figure
+  src='/images/projects/weather-dashboard/ss4.png'
+  alt='Layout showing weather conditions for a searched city'
+  caption='Weather layout showing current and forecasted conditions.'
+  size='medium'
+/>
+
+## Reflection
+
+This was the first time I really started thinking about structuring code for readability and maintainability rather than just getting it to work.  
+It also gave me confidence in using public APIs, parsing JSON responses, and updating the UI dynamically.
+
+While I don’t plan to migrate this project to React or Next.js, I now see how component-based design could simplify many of the repetitive DOM updates in this app.
+
+## Future Improvements
+
+Although this app serves as a snapshot to how I tackled a challenge at that particular time, there are improvements that could be made to it:
+
+- Replace outdated weather icons with a more modern set
+- Improve accessibility (contrast, focus states)
+- Add intermediate breakpoints for better tablet layouts
