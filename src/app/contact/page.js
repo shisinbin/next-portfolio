@@ -2,6 +2,7 @@ import Section from '@/components/Section';
 import SectionHeading from '@/components/SectionHeading';
 import styles from './contactpage.module.css';
 import ContactForm from '@/components/ContactForm';
+import SocialLinks from '@/components/SocialLinks';
 
 export const metadata = {
   title: 'Contact Me',
@@ -18,6 +19,8 @@ function ContactPage() {
       </p>
 
       <ContactForm />
+
+      <SocialLinks />
     </Section>
   );
 }

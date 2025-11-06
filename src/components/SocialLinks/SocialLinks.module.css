@@ -1,0 +1,38 @@
+.wrapper {
+  margin-top: var(--space-lg);
+  text-align: center;
+}
+.heading {
+  margin-bottom: var(--space-md);
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+.list {
+  padding: 0;
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+.list a {
+  color: var(--accent-400);
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  text-decoration: none;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  transition: background 0.2s ease, color 0.2s ease,
+    border-color 0.2s ease;
+}
+.list a:hover {
+  background: var(--accent-400);
+  color: white;
+  border-color: var(--accent-400);
+}
+.list svg {
+  width: 1.2rem;
+  height: 1.2rem;
+}
