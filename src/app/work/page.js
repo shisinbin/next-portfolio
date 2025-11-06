@@ -6,12 +6,16 @@ import Grid from '@/components/Grid';
 import { getAllProjects } from '@/lib/projects';
 import styles from './workpage.module.css';
 
+export const metadata = {
+  title: 'Work',
+};
+
 async function WorkPage() {
   const projects = await getAllProjects();
 
   return (
     <Section>
-      <SectionHeading>Work Page</SectionHeading>
+      <SectionHeading>Work</SectionHeading>
       <p className={styles.intro}>
         Here&apos;s a collection of projects I&apos;ve worked on -
         some professional, some personal.

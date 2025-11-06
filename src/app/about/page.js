@@ -2,6 +2,10 @@ import Section from '@/components/Section';
 import SectionHeading from '@/components/SectionHeading';
 import styles from './aboutpage.module.css';
 
+export const metadata = {
+  title: 'About Me',
+};
+
 function AboutPage() {
   return (
     <Section>

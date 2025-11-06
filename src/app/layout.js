@@ -20,7 +20,10 @@ const monoFont = Spline_Sans_Mono({
 });
 
 export const metadata = {
-  title: 'Dev Portfolio - shisinbin',
+  title: {
+    template: '%s • shisinbin',
+    default: 'Dev Portfolio • shisibin',
+  },
   description: 'Welcome to my dev portfolio site',
 };
 
