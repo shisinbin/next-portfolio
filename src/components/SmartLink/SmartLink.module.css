@@ -1,0 +1,23 @@
+.link {
+  color: inherit;
+  display: inline;
+  vertical-align: baseline;
+  text-decoration-line: underline;
+  text-decoration-style: dotted;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+  text-underline-position: from-font;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+.link:hover {
+  color: var(--accent-600);
+}
+.icon {
+  display: inline-block;
+  vertical-align: middle;
+  line-height: 1;
+  width: 1em;
+  height: 1em;
+  stroke-width: 2;
+}
