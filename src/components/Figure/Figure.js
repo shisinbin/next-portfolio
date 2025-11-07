@@ -1,6 +1,7 @@
 import styles from './Figure.module.css';
 
 const SIZE_MAP = {
+  xs: { maxWidth: '20ch' },
   small: { maxWidth: '40ch' },
   medium: { maxWidth: '60ch' },
   large: { maxWidth: '80ch' },

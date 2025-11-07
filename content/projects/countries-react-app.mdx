@@ -1,0 +1,165 @@
+---
+title: 'Countries React App'
+date: '2024-06-05'
+description: 'A React-based project for exploring country data, built as a way to solidify React fundamentals and hands-on project structure.'
+tech: ['React', 'Styled Components', 'Parcel', 'REST Countries API']
+image: '/images/projects/countries-react-app/cover.png'
+links:
+  live: 'https://fabulous-dodol-b93b05.netlify.app/'
+  github: 'https://github.com/shisinbin/countries-react-app'
+---
+
+<Figure
+  src='/images/projects/countries-react-app/ss1_desktop_dark.png'
+  alt='Layout showing main search area, on desktop, in dark mode'
+  caption='Countries search layout displaying results.'
+  size='medium'
+/>
+
+## Overview
+
+An interactive app that lets users browse, search, and filter countries from the [REST Countries API](https://restcountries.com/). Users can view country details, explore bordering nations, and switch between light and dark themes.
+
+[Live site](https://fabulous-dodol-b93b05.netlify.app) · [Source code](https://github.com/shisinbin/countries-react-app)
+
+## Background
+
+This project started as an independent build after the first few chapters of [_The Joy of React_](https://www.joyofreact.com/). The goal was to apply recently learned fundamentals - composition, hooks, state, effects - to a real API-driven app, without step-by-step guidance.
+
+I found [Frontend Mentor’s REST Countries challenge](https://www.frontendmentor.io/challenges/rest-countries-api-with-color-theme-switcher-5cacc469fec04111f7b848ca) and used it as a base to practise structuring a React app, organising state, and handling asynchronous data.
+
+<Figure
+  src='/images/projects/countries-react-app/ss4_desktop_dark_detail.png'
+  alt='Layout showing country detail, on desktop, in dark mode'
+  caption='Country detail page, showing clickable links to bordering countries.'
+  size='medium'
+/>
+
+## Features
+
+- Browse and search countries from the REST Countries API
+- Filter by region
+- View country details, including border countries
+- Toggle between light and dark mode
+- Pagination for large result sets
+- Local fallback data when the API fails
+
+## Tech Stack
+
+- **React** (built with hooks, and custom hooks)
+- **Styled Components** for styling and theming
+- Manual project setup with Parcel (no CRA/Vite) to understand tooling basics
+- Semantic HTML and accessibility best practices
+- CSS Grid and Flexbox for layout
+
+<Figure
+  src='/images/projects/countries-react-app/ss3_mobile_light.png'
+  alt='Layout showing main search area, on mobile, in light mode'
+  caption='Mobile layout in light mode for country search page.'
+  size='xs'
+/>
+
+## Key Learnings
+
+- **Project setup and structure:** configuring a React app from scratch, organising helpers, constants, and component files.
+- **Component design:** breaking down a large “main content” component into smaller, focused parts.
+- **React patterns:** prop delegation, effects with cleanup, memoisation, and derived state.
+- **Styling:** using `ThemeProvider` for consistent theming, experimenting with design tokens and reusable styled components.
+- **Accessibility:** improving keyboard navigation and semantics using utilities like `VisuallyHidden`.
+- **Resilience:** handling API timeouts and error states gracefully.
+
+## Code Highlight: Handling Fetch Timeouts
+
+One of the most satisfying parts of the build was improving how the app handled unreliable API responses. I used an [`AbortController`](https://developer.mozilla.org/en-US/docs/Web/API/AbortController) to cancel requests after 5 seconds and fall back to local data - making the UI feel more resilient.
+
+```js
+async function fetchWithTimeout(endpoint) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+  try {
+    const res = await fetch(endpoint, { signal: controller.signal });
+    clearTimeout(timeoutId);
+    return res;
+  } catch (err) {
+    clearTimeout(timeoutId);
+    throw err;
+  }
+}
+```
+
+This helped me understand cleanup functions, error handling, and how
+to think about **failure states** when fetching data in a React app.
+
+## Continued Development
+
+- Improve accessibility (e.g. using `prefers-reduced-motion` and `prefers-color-scheme`).
+- Add sorting (by country name or population).
+- Improve the design system further (rework elevation and shadows for dark mode).
+- Refine the CSS (fluid spacing, CSS variable organisation).
+- Simplify state flow - possibly using context for the search form.
+
+## Reflection
+
+Building this app was slow at first - starting from a single component and gradually shaping it into something structured. By the end, I'd like to think I not only improved my understanding of how React works, but improved my ability to think in React: how to build incrementally, abstract intentionally, and handle edge cases with care.
+
+## Links
+
+- **Live site:** [fabulous-dodol-b93b05.netlify.app](https://fabulous-dodol-b93b05.netlify.app/)
+- **Source code:** [GitHub](https://github.com/shisinbin/countries-react-app)
+
+## Asides
+
+### The Nifty Select
+
+One of my favourite bits was the custom `Select` component - a pattern Josh teaches where the native select remains accessible, but is hidden behind a styled “presentational” layer.
+
+```js
+function Select({ id, value, children, ...delegated }) {
+  const displayedValue = getDisplayedValue(value, children);
+
+  return (
+    <Wrapper>
+      <NativeSelect id={id} value={value} {...delegated}>
+        {children}
+      </NativeSelect>
+      <PresentationalBit>
+        {displayedValue}
+        <IconWrapper>
+          <ChevronDown size={24} strokeWidth={1} />
+        </IconWrapper>
+      </PresentationalBit>
+    </Wrapper>
+  );
+}
+```
+
+This pattern enabled me to control the styling completely while keeping accessibility intact. It's more of a CSS thing than a React thing, but the idea that you can separate _function_ from _presentation_, was a real eye-opener, and made me think about how you can design for both when building certain components.
+
+### The Unnecessary Effect Refactor
+
+As I later learned more about React, I came across [You Might Not Need an Effect](https://react.dev/learn/you-might-not-need-an-effect) and realised I could simplify a part of the app.
+Originally, pagination reset in an effect:
+
+```js
+React.useEffect(() => {
+  setCurrentPage(1);
+}, [searchTerm, region]);
+```
+
+Using the ideas in the article and refactoring it into event handlers instead:
+
+```js
+const handleSearchTermChange = (term) => {
+  setSearchTerm(term);
+  setCurrentPage(1);
+};
+
+const handleRegionChange = (region) => {
+  setRegion(region);
+  setCurrentPage(1);
+};
+```
+
+This change helped me understand that **not all state changes belong in effects**.
+Effects should handle external side effects - like fetching data or syncing with the DOM - not simple internal updates. By moving this logic into handlers, the app became more predictable and explicit: state updates now happen directly as a result of user actions, rather than reactively after render.

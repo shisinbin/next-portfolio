@@ -1,6 +1,7 @@
 import Callout from '@/components/Callout';
 import CodeSnippet from '@/components/CodeSnippet';
 import Figure from '@/components/Figure';
+import SmartLink from '@/components/SmartLink';
 import Image from 'next/image';
 
 export const COMPONENT_MAP = {
@@ -17,4 +18,5 @@ export const COMPONENT_MAP = {
   Callout,
   Image,
   Figure,
+  a: SmartLink,
 };
