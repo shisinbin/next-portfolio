@@ -1,5 +1,6 @@
 import Callout from '@/components/Callout';
 import CodeSnippet from '@/components/CodeSnippet';
+import ExpandableSection from '@/components/ExpandableSection';
 import Figure from '@/components/Figure';
 import SmartLink from '@/components/SmartLink';
 import Image from 'next/image';
@@ -19,4 +20,5 @@ export const COMPONENT_MAP = {
   Image,
   Figure,
   a: SmartLink,
+  ExpandableSection,
 };

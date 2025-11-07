@@ -108,11 +108,11 @@ Building this app was slow at first - starting from a single component and gradu
 - **Live site:** [fabulous-dodol-b93b05.netlify.app](https://fabulous-dodol-b93b05.netlify.app/)
 - **Source code:** [GitHub](https://github.com/shisinbin/countries-react-app)
 
-## Asides
+<ExpandableSection>
 
 ### The Nifty Select
 
-One of my favourite bits was the custom `Select` component - a pattern Josh teaches where the native select remains accessible, but is hidden behind a styled “presentational” layer.
+One of my favourite bits was the custom `Select` component - a pattern where the native select remains accessible, but is hidden behind a styled “presentational” layer.
 
 ```js
 function Select({ id, value, children, ...delegated }) {
@@ -163,3 +163,5 @@ const handleRegionChange = (region) => {
 
 This change helped me understand that **not all state changes belong in effects**.
 Effects should handle external side effects - like fetching data or syncing with the DOM - not simple internal updates. By moving this logic into handlers, the app became more predictable and explicit: state updates now happen directly as a result of user actions, rather than reactively after render.
+
+</ExpandableSection>
