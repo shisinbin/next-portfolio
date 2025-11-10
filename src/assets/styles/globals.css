@@ -78,6 +78,7 @@ html {
   --space-xl: 6rem;
 
   --viewport-padding: 16px;
+  --header-height: 64px;
 
   /* Core hues */
   --hue-accent: 200deg;
@@ -108,6 +109,7 @@ html {
   --color-surface: var(--gray-50);
   --color-border: var(--gray-200);
   --color-card-border: hsl(var(--hue-gray) 12% 70% / 0.3);
+  --color-backdrop: hsl(var(--hue-gray) 10% 35% / 0.8);
 
   /* Text */
   --color-text: var(--gray-900);

@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import styles from './MaxWidthWrapper.module.css';
 
 const VALID_TAGS = [
@@ -24,7 +25,7 @@ function MaxWidthWrapper({
   }
 
   return (
-    <Tag className={`${styles.wrapper} ${className}`}>{children}</Tag>
+    <Tag className={clsx(styles.wrapper, className)}>{children}</Tag>
   );
 }
 

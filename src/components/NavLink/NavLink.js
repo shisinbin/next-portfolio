@@ -1,9 +1,8 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-
-import styles from './NavLink.module.css';
 import clsx from 'clsx';
+import styles from './NavLink.module.css';
 
 function NavLink({ children, href, ...delegated }) {
   const pathname = usePathname();

@@ -1,10 +1,28 @@
 .wrapper {
+  font-size: 1.125rem;
   border-bottom: 1px solid hsl(0deg 0% 85%);
+  height: var(--header-height);
+}
+.mainHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-block: 16px;
+}
+.desktopNav {
+  display: none;
+  gap: clamp(1rem, 9vw - 4.5rem, 3.5rem);
+}
+.menuButton {
+  padding: 12px;
+  margin: -12px;
 }
 
-.navList {
-  list-style-type: none;
-  padding: 16px 0;
-  display: flex;
-  gap: var(--space-md);
+@media (min-width: 48rem) {
+  .desktopNav {
+    display: flex;
+  }
+  .mobileActions {
+    display: none;
+  }
 }
