@@ -13,6 +13,7 @@
 .wrapper {
   position: fixed;
   inset: 0;
+  z-index: 200;
 }
 .backdrop {
   position: absolute;

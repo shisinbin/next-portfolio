@@ -7,6 +7,8 @@ import UnstyledButton from '@/components/UnstyledButton';
 import MobileMenu from '@/components/MobileMenu';
 import NavLink from '@/components/NavLink';
 import styles from './Header.module.css';
+import useScrollDirection from '@/hooks/useScrollDirection';
+import clsx from 'clsx';
 
 const links = [
   { href: '/', label: 'Home' },
@@ -20,8 +22,18 @@ function Header() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const dismissMenu = () => setIsMenuOpen(false);
 
+  const { scrollDir, hasScrolled } = useScrollDirection({
+    threshold: 50,
+  });
+
+  const headerClass = clsx(
+    styles.wrapper,
+    styles[scrollDir === 'down' ? 'headerHidden' : 'headerVisible'],
+    hasScrolled && styles.headerScrolled
+  );
+
   return (
-    <header className={styles.wrapper}>
+    <header className={headerClass}>
       <MaxWidthWrapper className={styles.mainHeader}>
         <div className={styles.logo}>Logo</div>
 
