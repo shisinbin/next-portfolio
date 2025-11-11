@@ -9,11 +9,13 @@
   font: inherit;
   color: inherit;
 }
-
 .button:focus {
   outline-offset: 2px;
 }
-
 .button:focus:not(:focus-visible) {
   outline: none;
+}
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
 }
