@@ -1,9 +1,10 @@
 .section {
-  padding-block: calc(var(--space-lg) + var(--header-height));
+  padding-top: calc(var(--space-lg) + var(--header-height));
+  padding-bottom: var(--space-md);
 }
 
 @media (min-width: 768px) {
   .section {
-    padding-block: calc(var(--space-xl) + var(--header-height));
+    padding-top: calc(var(--space-xl) + var(--header-height));
   }
 }

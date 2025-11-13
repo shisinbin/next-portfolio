@@ -133,6 +133,12 @@ body > main {
 
 html {
   font-family: var(--font-family), system-ui, sans-serif;
+
+  /*
+    Reserves space for the scrollbar, regardless if there is one.
+    Helps avoid layout shifts
+  */
+  scrollbar-gutter: stable;
 }
 code {
   font-family: var(--font-family-mono);

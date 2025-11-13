@@ -2,8 +2,14 @@ import Section from '@/components/Section';
 import SectionHeading from '@/components/SectionHeading';
 import styles from './homepage.module.css';
 import Link from 'next/link';
+import FeaturedProjectsSection from '@/components/FeaturedProjectsSection';
+import { getAllProjects } from '@/lib/projects';
 
-export default function HomePage() {
+export default async function HomePage() {
+  const projects = await getAllProjects();
+  const featured = projects.filter((p) => p.featured);
+  // console.log(featured);
+
   return (
     <>
       <Section className={styles.hero}>
@@ -20,13 +26,16 @@ export default function HomePage() {
         </Link>
       </Section>
 
-      <Section>
-        <SectionHeading>Featured Projects</SectionHeading>
-      </Section>
+      {featured && featured.length > 0 && (
+        <Section>
+          <SectionHeading>Featured Projects</SectionHeading>
+          <FeaturedProjectsSection projects={featured} />
+        </Section>
+      )}
 
-      <Section>
+      {/* <Section>
         <SectionHeading>Latest Posts</SectionHeading>
-      </Section>
+      </Section> */}
     </>
   );
 }

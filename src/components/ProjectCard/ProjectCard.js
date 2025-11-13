@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import styles from './ProjectCard.module.css';
 import Image from 'next/image';
-import ExternalLink from '../SmartLink';
+import SmartLink from '../SmartLink';
 
 function ProjectCard({ project }) {
   const {
@@ -39,24 +39,10 @@ function ProjectCard({ project }) {
       {links && (
         <div className={styles.links}>
           {links.live && (
-            // <a
-            //   href={links.live}
-            //   target='_blank'
-            //   rel='noopener noreferrer'
-            // >
-            //   Live
-            // </a>
-            <ExternalLink href={links.live}>Live</ExternalLink>
+            <SmartLink href={links.live}>Live</SmartLink>
           )}
           {links.github && (
-            // <a
-            //   href={links.github}
-            //   target='_blank'
-            //   rel='noopener noreferrer'
-            // >
-            //   GitHub
-            // </a>
-            <ExternalLink href={links.github}>GitHub</ExternalLink>
+            <SmartLink href={links.github}>GitHub</SmartLink>
           )}
         </div>
       )}
