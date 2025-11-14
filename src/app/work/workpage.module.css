@@ -4,7 +4,7 @@
 }
 
 .grid {
-  --grid-gap: 2.5rem;
+  --grid-gap: 1.5rem;
   list-style: none;
   padding: 0;
 }

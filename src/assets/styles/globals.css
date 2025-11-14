@@ -77,8 +77,18 @@ html {
   --space-lg: 4rem;
   --space-xl: 6rem;
 
+  --content-width: 880px;
   --viewport-padding: 16px;
   --header-height: 64px;
+
+  /* Breakpoints - for reference only */
+  /*
+    544px  / 34rem
+    ...576px  / 36rem
+    ...640px  / 40rem
+    768px; / 48rem - Laptop and higher
+    1024px / 60rem - Desktop
+  */
 
   /* Core hues */
   --hue-accent: 200deg;
@@ -90,6 +100,7 @@ html {
   --gray-400: hsl(var(--hue-gray) 5% 50%);
   --gray-700: hsl(var(--hue-gray) 10% 30%);
   --gray-900: hsl(var(--hue-gray) 15% 15%); */
+
   --gray-50: hsl(var(--hue-gray) 20% 97%);
   --gray-100: hsl(var(--hue-gray) 20% 95%);
   --gray-200: hsl(var(--hue-gray) 15% 85%);
@@ -144,7 +155,7 @@ code {
   font-family: var(--font-family-mono);
 }
 
-@media (min-width: 560px) {
+@media (min-width: 544px) {
   html {
     --viewport-padding: 24px;
   }

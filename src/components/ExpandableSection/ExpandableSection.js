@@ -23,7 +23,7 @@ function ExpandableSection({ children, defaultOpen = false }) {
 
   return (
     <section className={styles.wrapper}>
-      <button className={styles.header} onClick={toggleOpen}>
+      <button className={styles.headerButton} onClick={toggleOpen}>
         <ChevronRight
           className={`${styles.icon} ${
             isOpen ? styles.iconOpen : ''

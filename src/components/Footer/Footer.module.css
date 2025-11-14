@@ -45,7 +45,7 @@
   color: var(--accent-600);
 }
 
-@media (min-width: 48rem) {
+@media (min-width: 768px) {
   .nav {
     display: flex;
   }

@@ -37,7 +37,7 @@
   margin: -12px;
 }
 
-@media (min-width: 48rem) {
+@media (min-width: 768px) {
   .desktopNav {
     display: flex;
   }
