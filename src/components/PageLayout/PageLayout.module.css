@@ -1,0 +1,29 @@
+.layout {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr min(var(--trimmed-content-width), 100%) 1fr;
+  max-width: var(--outer-content-width);
+  margin: 0 auto;
+  padding-inline: var(--viewport-padding);
+  padding-block: calc(var(--header-height) + 64px) 32px;
+
+  background: transparent;
+  /* could add a box-shadow */
+}
+
+.layout > * {
+  --col: 2;
+  /*
+    Using a CSS variable to break source-order advantage.
+    This still doesn't work perfectly, and need to use !important tag to be sure.
+    In future, remove this and use Center/FullBleed utility components for layout.
+  */
+  grid-column: var(--col);
+}
+
+/* @media (min-width: 1280px) {
+  .layout {
+    border-radius: 8px;
+    border: 1px solid palevioletred;
+  }
+} */

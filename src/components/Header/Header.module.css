@@ -27,6 +27,9 @@
   justify-content: space-between;
   align-items: center;
   padding-block: 16px;
+  padding-inline: var(--viewport-padding);
+  max-width: var(--content-width);
+  margin: 0 auto;
 }
 .desktopNav {
   display: none;

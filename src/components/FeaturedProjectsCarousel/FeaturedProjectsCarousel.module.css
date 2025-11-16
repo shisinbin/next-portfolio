@@ -1,8 +1,6 @@
-.wrapper {
-  margin-block: 3rem;
-}
-
 .trackContainer {
+  grid-column: 1 / -1 !important; /* Full-bleed */
+
   position: relative;
   isolation: isolate;
 }
@@ -80,12 +78,6 @@
   opacity: 0;
   /* cursor: not-allowed; */
   pointer-events: none;
-}
-
-.ctaWrapper {
-  display: flex;
-  justify-content: center;
-  font-size: 1.125rem;
 }
 
 @media (min-width: 768px) {

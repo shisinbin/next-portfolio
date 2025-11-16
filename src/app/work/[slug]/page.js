@@ -1,7 +1,7 @@
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import { notFound } from 'next/navigation';
 import { format } from 'date-fns';
-import Section from '@/components/Section';
+import PageLayout from '@/components/PageLayout';
 import SectionHeading from '@/components/SectionHeading';
 import { getProjectBySlug } from '@/lib/projects';
 import { COMPONENT_MAP } from '@/lib/mdx-components';
@@ -33,15 +33,17 @@ async function ProjectPage({ params }) {
   );
 
   return (
-    <Section>
-      <SectionHeading>{frontmatter.title}</SectionHeading>
-      <p className={styles.date}>
-        Last updated on <time>{humanisedDate}</time>
-      </p>
-      <div className={styles.content}>
-        <MDXRemote source={content} components={COMPONENT_MAP} />
-      </div>
-    </Section>
+    <PageLayout>
+      <section>
+        <SectionHeading>{frontmatter.title}</SectionHeading>
+        <p className={styles.date}>
+          Last updated on <time>{humanisedDate}</time>
+        </p>
+        <div className={styles.content}>
+          <MDXRemote source={content} components={COMPONENT_MAP} />
+        </div>
+      </section>
+    </PageLayout>
   );
 }
 

@@ -1,20 +1,19 @@
 .wrapper {
-  margin-top: 6rem;
   /* background: hsl(0deg 0% 98%); */
   background-color: hsl(0deg 0% 100% / 0.7);
   border-top: 1px solid hsl(0deg 0% 85%);
   color: var(--color-text-muted);
   font-size: 0.9375rem;
+  margin-top: 64px;
 }
 .content {
-  display: flex;
-  flex-direction: column;
-}
-.upper {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding-block: var(--space-sm);
+  padding-inline: var(--viewport-padding);
+  max-width: var(--content-width);
+  margin: 0 auto;
 }
 .brand {
   font-weight: 600;

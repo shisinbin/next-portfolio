@@ -2,13 +2,12 @@
 
 import React from 'react';
 import { Menu } from 'react-feather';
-import MaxWidthWrapper from '@/components/MaxWidthWrapper';
+import clsx from 'clsx';
+import NavLink from '@/components/NavLink';
 import UnstyledButton from '@/components/UnstyledButton';
 import MobileMenu from '@/components/MobileMenu';
-import NavLink from '@/components/NavLink';
-import styles from './Header.module.css';
 import useScrollDirection from '@/hooks/useScrollDirection';
-import clsx from 'clsx';
+import styles from './Header.module.css';
 
 const links = [
   { href: '/', label: 'Home' },
@@ -34,7 +33,7 @@ function Header() {
 
   return (
     <header className={headerClass}>
-      <MaxWidthWrapper className={styles.mainHeader}>
+      <div className={styles.mainHeader}>
         <div className={styles.logo}>Logo</div>
 
         <nav className={styles.desktopNav}>
@@ -60,7 +59,7 @@ function Header() {
           isOpen={isMenuOpen}
           onDismiss={dismissMenu}
         />
-      </MaxWidthWrapper>
+      </div>
     </header>
   );
 }

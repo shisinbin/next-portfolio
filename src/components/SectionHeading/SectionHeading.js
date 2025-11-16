@@ -1,7 +1,11 @@
 import styles from './SectionHeading.module.css';
 
-function SectionHeading({ children }) {
-  return <h2 className={styles.heading}>{children}</h2>;
+function SectionHeading({ children, ...delegated }) {
+  return (
+    <h2 className={styles.heading} {...delegated}>
+      {children}
+    </h2>
+  );
 }
 
 export default SectionHeading;

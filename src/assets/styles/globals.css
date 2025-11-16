@@ -77,7 +77,11 @@ html {
   --space-lg: 4rem;
   --space-xl: 6rem;
 
-  --content-width: 880px;
+  --content-width: 1024px; /* 64rem */
+  --outer-content-width: 1280px; /* 80rem */
+  --trimmed-content-width: calc(
+    var(--content-width) - (var(--viewport-padding) * 2)
+  );
   --viewport-padding: 16px;
   --header-height: 64px;
 
