@@ -2,6 +2,7 @@
   border: none;
   margin: 4rem calc(var(--viewport-padding) * -1);
   background: hsl(65deg, 50%, 85%);
+  /* background: palevioletred; */
   box-shadow: 0 4px 10px hsl(0deg 0% 0% / 0.1);
 
   --ease-out: cubic-bezier(0.2, 0.5, 0.25, 1);
@@ -39,13 +40,13 @@
   padding: 0 var(--viewport-padding);
 }
 
-@media (min-width: 928px) {
+@media (min-width: 944px) {
   .wrapper {
     border-radius: 8px;
   }
 }
 
-@media (min-width: 980px) {
+@media (min-width: 996px) {
   .wrapper {
     --buffer: 50px;
     border-radius: 8px;
