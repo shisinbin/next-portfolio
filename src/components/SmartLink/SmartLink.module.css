@@ -12,6 +12,13 @@
 }
 .link:hover {
   color: var(--accent-600);
+
+  /* Cool background color approach */
+  /* background: color-mix(
+    in srgb,
+    var(--accent-600, hsl(200deg 90% 45%)) 6%,
+    transparent
+  ); */
 }
 .icon {
   display: inline-block;

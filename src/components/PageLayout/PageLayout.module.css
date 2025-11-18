@@ -5,7 +5,8 @@
   max-width: var(--outer-content-width);
   margin: 0 auto;
   padding-inline: var(--viewport-padding);
-  padding-block: calc(var(--header-height) + 64px) 32px;
+  padding-top: calc(var(--header-height) + 32px);
+  padding-bottom: 32px;
 
   background: transparent;
   /* could add a box-shadow */
@@ -27,3 +28,14 @@
     border: 1px solid palevioletred;
   }
 } */
+
+@media (min-width: 544px) {
+  .layout {
+    padding-top: calc(var(--header-height) + 48px);
+  }
+}
+@media (min-width: 768px) {
+  .layout {
+    padding-top: calc(var(--header-height) + 64px);
+  }
+}

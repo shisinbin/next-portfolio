@@ -6,6 +6,10 @@ import SectionHeading from '@/components/SectionHeading';
 import { getProjectBySlug } from '@/lib/projects';
 import { COMPONENT_MAP } from '@/lib/mdx-components';
 import styles from './projectpage.module.css';
+import Link from 'next/link';
+import { ArrowLeft, CornerLeftUp } from 'react-feather';
+import SmartLink from '@/components/SmartLink';
+import NextProject from '@/components/NextProject';
 
 export async function generateMetadata({ params }) {
   const p = await params;
@@ -35,6 +39,12 @@ async function ProjectPage({ params }) {
   return (
     <PageLayout>
       <section>
+        <nav className={styles.metaNav}>
+          <SmartLink href='/work' className={styles.backLink}>
+            <ArrowLeft />
+            Back to all projects
+          </SmartLink>
+        </nav>
         <SectionHeading>{frontmatter.title}</SectionHeading>
         <p className={styles.date}>
           Last updated on <time>{humanisedDate}</time>
@@ -42,6 +52,7 @@ async function ProjectPage({ params }) {
         <div className={styles.content}>
           <MDXRemote source={content} components={COMPONENT_MAP} />
         </div>
+        <NextProject slug={frontmatter.next} />
       </section>
     </PageLayout>
   );

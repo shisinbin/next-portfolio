@@ -40,13 +40,13 @@
   padding: 0 var(--viewport-padding);
 }
 
-@media (min-width: 944px) {
+@media (min-width: 1024px) {
   .wrapper {
     border-radius: 8px;
   }
 }
 
-@media (min-width: 996px) {
+@media (min-width: 1080px) {
   .wrapper {
     --buffer: 50px;
     border-radius: 8px;
