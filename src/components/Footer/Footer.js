@@ -29,7 +29,7 @@ function Footer() {
             <GitHub size={20} />
           </a>
           <a
-            href='https://linkedin.com/in/yourprofile'
+            href='https://www.linkedin.com/in/shivraj-binepal-95336325b/'
             target='_blank'
             rel='noopener noreferrer'
             aria-label='LinkedIn'

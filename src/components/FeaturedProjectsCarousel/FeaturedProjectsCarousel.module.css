@@ -3,6 +3,7 @@
 
   position: relative;
   isolation: isolate;
+  margin-bottom: 2rem;
 }
 .track {
   position: relative;
@@ -13,7 +14,6 @@
   gap: 1.5rem;
   /* margin-inline: calc(var(--viewport-padding) * -1);
   padding-inline: var(--viewport-padding); */
-  margin-bottom: 2rem;
 }
 .track::-webkit-scrollbar {
   display: none;

@@ -20,20 +20,38 @@
   margin-inline: auto;
   margin-bottom: 2rem;
 }
-
 .cta {
   display: inline-block;
   text-decoration: none;
-  background: var(--accent-400);
-  color: white;
-  padding: 0.75rem 1.5rem;
+  width: 200px;
+  height: 50px;
+  border-radius: 6px;
+  background: var(--accent-50);
+}
+.ctaText {
+  height: 100%;
+  width: 100%;
+  display: grid;
+  place-content: center;
+  text-decoration: none;
+  color: var(--accent-400);
   border-radius: 6px;
   font-weight: 600;
-  transition: background 0.2s;
+  transition: transform 0.2s ease-in;
+  will-change: transform;
+  border: 3px solid var(--accent-400);
+
+  /* font-size: 1rem;
+  font-weight: 600; */
 }
 
-.cta:hover {
-  background: var(--accent-600);
+.cta:hover .ctaText {
+  transform: translate(8px, -8px);
+}
+
+.cta:active .ctaText {
+  transform: translate(0, 0);
+  transition: transform 80ms ease-out;
 }
 
 .linkWrapper {

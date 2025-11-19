@@ -10,7 +10,7 @@ const LINKS = [
   {
     name: 'LinkedIn',
     icon: Linkedin,
-    href: 'https://linkedin.com',
+    href: 'https://www.linkedin.com/in/shivraj-binepal-95336325b/',
   },
   {
     name: 'Email',

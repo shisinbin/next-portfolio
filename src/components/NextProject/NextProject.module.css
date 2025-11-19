@@ -6,19 +6,14 @@
   justify-content: flex-end;
 }
 
-.card {
-  text-decoration: none;
-  color: inherit;
+.next {
+  --card-br: 8px;
+  --card-image-dir: row;
+  --card-content-margin-top: 0;
+  --card-content-margin-bottom: 0;
+
   max-width: 500px;
-  padding: 14px;
-  border: 1px solid var(--gray-200);
-  border-radius: 8px;
-
-  transition: box-shadow 0.3s ease; /*, transform 0.3s ease; */
-
-  display: flex;
-  gap: 0.8rem;
-  position: relative;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .topRow {
@@ -26,35 +21,31 @@
   gap: 8px;
   align-items: center;
   font-size: 1rem;
-  margin-bottom: 8px;
-  color: var(--color-text-muted);
   color: var(--accent-600);
 }
 
-.card:hover {
-  box-shadow: 0 6px 18px hsl(0 0% 0% / 0.08);
-  /* transform: translateY(-3px); */
+.next:hover {
+  /* box-shadow: 0 6px 18px hsl(0 0% 0% / 0.08); */
+  transform: translateY(-2px);
+  /* box-shadow: 0 4px 10px hsl(0 0% 0% / 0.1); */
+  box-shadow: var(--shadow-elevation-medium);
 }
 
-.card:hover .icon {
+.next:hover .icon {
   transform: translateX(6px);
 }
 
-.card:hover .image {
+.next:hover .image {
   filter: brightness(100%);
 }
 
 .imageWrapper {
   display: none;
   position: relative;
-  width: 30%;
   min-width: 110px;
-  /* aspect-ratio: 4 / 3; */
-  border-radius: 4px 0 0 4px;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--card-br) 0 0 var(--card-br);
   overflow: hidden;
-
-  /* margin: -2px;
-  margin-right: 0; */
 }
 
 .image {
@@ -73,33 +64,27 @@
   */
   background: linear-gradient(
     to right,
-    hsla(228, 20%, 95.1%, 0) 0%,
-    hsla(228, 20%, 95.1%, 0.014) 16.4%,
-    hsla(228, 20%, 95.1%, 0.052) 30%,
-    hsla(228, 20%, 95.1%, 0.108) 40.9%,
-    hsla(228, 20%, 95.1%, 0.18) 49.7%,
-    hsla(228, 20%, 95.1%, 0.264) 56.6%,
-    hsla(228, 20%, 95.1%, 0.356) 62%,
-    hsla(228, 20%, 95.1%, 0.454) 66.2%,
-    hsla(228, 20%, 95.1%, 0.553) 69.6%,
-    hsla(228, 20%, 95.1%, 0.651) 72.6%,
-    hsla(228, 20%, 95.1%, 0.743) 75.4%,
-    hsla(228, 20%, 95.1%, 0.826) 78.5%,
-    hsla(228, 20%, 95.1%, 0.897) 82.1%,
-    hsla(228, 20%, 95.1%, 0.952) 86.7%,
-    hsla(228, 20%, 95.1%, 0.987) 92.5%,
-    hsl(228, 20%, 95.1%) 100%
+    hsla(225, 20%, 96.08%, 0) 0%,
+    hsla(225, 20%, 96.08%, 0.013) 8.1%,
+    hsla(225, 20%, 96.08%, 0.049) 15.5%,
+    hsla(225, 20%, 96.08%, 0.104) 22.5%,
+    hsla(225, 20%, 96.08%, 0.175) 29%,
+    hsla(225, 20%, 96.08%, 0.259) 35.3%,
+    hsla(225, 20%, 96.08%, 0.352) 41.2%,
+    hsla(225, 20%, 96.08%, 0.45) 47.1%,
+    hsla(225, 20%, 96.08%, 0.55) 52.9%,
+    hsla(225, 20%, 96.08%, 0.648) 58.8%,
+    hsla(225, 20%, 96.08%, 0.741) 64.7%,
+    hsla(225, 20%, 96.08%, 0.825) 71%,
+    hsla(225, 20%, 96.08%, 0.896) 77.5%,
+    hsla(225, 20%, 96.08%, 0.951) 84.5%,
+    hsla(225, 20%, 96.08%, 0.987) 91.9%,
+    hsl(225, 20%, 96.08%) 100%
   );
 }
 
 .icon {
   transition: transform 0.3s cubic-bezier(0.49, 0.54, 0.39, 0.98);
-}
-
-.content {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
 }
 
 .desc {
@@ -113,11 +98,5 @@
 @media (min-width: 544px) {
   .imageWrapper {
     display: revert;
-  }
-}
-
-@media (min-width: 768px) {
-  .card {
-    padding: 20px;
   }
 }

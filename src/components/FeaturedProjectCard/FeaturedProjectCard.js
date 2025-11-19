@@ -1,25 +1,30 @@
-import Link from 'next/link';
+import Image from 'next/image';
+import Card from '../Card';
 import styles from './FeaturedProjectCard.module.css';
 
 function FeaturedProjectCard({ project }) {
   const { title, description, image, slug, tech } = project;
+
+  const imageSlot = (
+    <div className={styles.imageWrapper}>
+      <Image src={image} alt={title} className={styles.image} fill />
+    </div>
+  );
+
   return (
-    <article className={styles.wrapper}>
-      <Link href={`/work/${slug}`} className={styles.link}>
-        <div className={styles.imageWrapper}>
-          <img src={image} alt={title} className={styles.image} />
-        </div>
-        <div className={styles.content}>
-          <h3 className={styles.title}>{title}</h3>
-          <p className={styles.desc}>{description}</p>
-          <ul className={styles.techList}>
-            {tech?.slice(0, 3).map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
-        </div>
-      </Link>
-    </article>
+    <Card
+      className={styles.featured}
+      href={`/work/${slug}`}
+      imageSlot={imageSlot}
+    >
+      <h3 className={styles.title}>{title}</h3>
+      <p className={styles.desc}>{description}</p>
+      <ul className={styles.techList}>
+        {tech?.slice(0, 3).map((item) => (
+          <li key={item}>{item}</li>
+        ))}
+      </ul>
+    </Card>
   );
 }
 

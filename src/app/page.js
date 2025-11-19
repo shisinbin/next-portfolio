@@ -23,7 +23,7 @@ export default async function HomePage() {
             focused, design-driven.
           </p>
           <Link href='/work' className={styles.cta}>
-            View my work
+            <span className={styles.ctaText}>View my work</span>
           </Link>
         </section>
 
