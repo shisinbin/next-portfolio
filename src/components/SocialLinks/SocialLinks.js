@@ -20,7 +20,7 @@ const LINKS = [
   {
     name: 'Website',
     icon: Globe,
-    href: 'https://google.com',
+    href: 'https://shisinbin.dev/',
   },
 ];
 
