@@ -8,6 +8,7 @@ import UnstyledButton from '@/components/UnstyledButton';
 import MobileMenu from '@/components/MobileMenu';
 import useScrollDirection from '@/hooks/useScrollDirection';
 import styles from './Header.module.css';
+import Logo from '../Logo';
 
 const links = [
   { href: '/', label: 'Home' },
@@ -34,7 +35,7 @@ function Header() {
   return (
     <header className={headerClass}>
       <div className={styles.mainHeader}>
-        <div className={styles.logo}>Logo</div>
+        <Logo />
 
         <nav className={styles.desktopNav}>
           {links.map(({ href, label }) => (

@@ -11,6 +11,10 @@
   z-index: 100;
   background-color: hsl(0deg 0% 100% / 0.7);
   backdrop-filter: blur(12px) saturate(1.2);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .headerHidden {
   transform: translateY(-100%);
@@ -26,8 +30,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-block: 16px;
+  /* transform: translateY(-3px); */
+  /* padding-block: 12px; */
   padding-inline: var(--viewport-padding);
+  width: 100%;
   max-width: var(--content-width);
   margin: 0 auto;
 }

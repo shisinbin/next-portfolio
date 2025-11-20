@@ -19,8 +19,8 @@ export default async function HomePage() {
             <span className={styles.accent}>shisinbin</span>.
           </h1>
           <p className={styles.subtitle}>
-            I build thoughtful digital experiences - front-end
-            focused, design-driven.
+            Building things on the web. Solving problems. Chasing the
+            feeling when it finally clicks.
           </p>
           <Link href='/work' className={styles.cta}>
             <span className={styles.ctaText}>View my work</span>

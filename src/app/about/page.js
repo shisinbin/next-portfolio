@@ -14,22 +14,26 @@ function AboutPage() {
         <SectionHeading>About Me</SectionHeading>
         <div className={styles.content}>
           <p>
-            I am an aspiring web developer with a focus on building
-            web apps using React and Next.js.
+            I am an aspiring web developer focused on building web
+            apps with React and Next.js.
           </p>
           <p>
-            I&apos;ve spent the past few years learning,
-            experimenting, and trying to build things that are clean,
+            Over the past few years, I&apos;ve been learning,
+            experimenting, and trying to build things that feel clean,
             efficient, and well-structured.
           </p>
           <p>
-            I care about the details - how things are built, how they
-            work together, and how they hold up over time.
+            I&apos;ve grown to really enjoy working in the React
+            ecosystem - the component-driven approach just makes sense
+            to me. I like how it encourages encapsulation, reuse, and
+            small, meaningful pieces that come together to form
+            something bigger.
           </p>
           <p>
-            It hasn&apos;t been an easy path. Web development moves
-            fast, and it&apos;s easy to get bogged down or feel
-            behind. But I&apos;m still here, learning and improving.
+            The path hasn&apos;t been easy. The web moves fast, and
+            it&apos;s easy to feel stuck or behind. But I&apos;m still
+            here, still learning, and still trying to get better
+            project by project.
           </p>
           <p>
             You can see what I&apos;ve been working on in the{' '}

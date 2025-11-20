@@ -1,0 +1,13 @@
+.logo {
+  text-decoration: none;
+  color: inherit;
+  font-size: 1.5rem;
+  font-weight: bolder;
+  /* letter-spacing: 0.5px; */
+
+  /* To offset the logo's leading trail */
+  transform: translateX(6px);
+}
+.logo:hover {
+  opacity: 0.8;
+}

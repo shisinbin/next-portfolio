@@ -10,8 +10,10 @@ function BlogPage() {
   return (
     <PageLayout>
       <section>
-        <SectionHeading>Blog Page</SectionHeading>
-        <p>Blog goes here.</p>
+        <SectionHeading>Blog</SectionHeading>
+        <p className={styles.intro}>
+          A quiet room for now. Words arriving shortly.
+        </p>
       </section>
     </PageLayout>
   );
