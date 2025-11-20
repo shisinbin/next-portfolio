@@ -24,7 +24,33 @@ export const metadata = {
     template: '%s • shisinbin',
     default: 'Dev Portfolio • shisibin',
   },
-  description: 'Welcome to my dev portfolio site',
+  description:
+    'Portfolio of a web developer building React + Next.js projects',
+  openGraph: {
+    title: 'shisinbin.dev',
+    description: 'Web developer portfolio',
+    url: 'https://shisinbin.dev',
+    siteName: 'shisinbin.dev',
+    images: [
+      {
+        url: '/og.png',
+        width: 1200,
+        height: 630,
+      },
+    ],
+    locale: 'en_GB',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'shisinbin.dev',
+    description: 'Web developer portfolio',
+    images: ['/og.png'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({ children }) {
