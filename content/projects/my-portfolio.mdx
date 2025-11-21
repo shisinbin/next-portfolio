@@ -165,7 +165,9 @@ The end result: smooth animation, no wasted work, and a stable scroll listener t
 
 ## The `ExpandableSection` accordion trick
 
-I wanted to build a section in a page that expanded when clicked. The initial approach to tackling this was to leverage React and use state, refs, effects, and manual height calculations. It worked but I ran into issues when resizing the window while the section was opened, and fixing this would have required adding an event listener looking out for when the window was resized too. That was until I discovered leveraging the power of CSS Grid (yet again!) could also help achieve this accordion effect.
+I wanted to build a section of the page that expanded when clicked. My first instinct was to do it the "React way": track open/closed state and run an effect to measure the section's height using a ref. It worked but I later ran into issues when resizing the window while the section was opened, and fixing this would have required adding a resize event listener (more logic).
+
+Then I discovered that CSS Grid could do the heavy lifting to help achieve this accordion effect.
 
 <ExpandableSection>
 
@@ -173,18 +175,20 @@ I wanted to build a section in a page that expanded when clicked. The initial ap
 
 </ExpandableSection>
 
-We still use state, but only to track whether the user wants the section opened or not. Then dependent on this state our collapsed section looks like this:
+Instead of measuring anything, the section becomes a one-row grid whose size is dependent on whether it's open. The collapsed state looks like this:
 
 ```css
 grid-template-rows: 0fr;
 ```
 
-and the expanded section looks like this:
+And the expanded section becomes:
 
 ```css
 grid-template-rows: 1fr;
 ```
 
-We just need to add a transition and the overall effect is smooth and doesn't require measuring anything. It's much simpler, and a useful reminder of how CSS can be used to handle interactions without JavaScript.
+Add a transition and that's basically the accordion effect achieved.
+
+So the final version uses React for the toggle and CSS Grid for everything else. A useful reminder that investigating whether CSS and in particular the layout system can help for such problems can help produce a simpler solution than leaning too heavily on JavaScript.
 
 ## The `FeaturedProjectCarousel`

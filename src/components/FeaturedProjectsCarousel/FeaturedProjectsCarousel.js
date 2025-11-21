@@ -4,49 +4,12 @@ import React from 'react';
 import clsx from 'clsx';
 import { ChevronLeft, ChevronRight } from 'react-feather';
 import FeaturedProjectCard from '../FeaturedProjectCard';
-import SmartLink from '../SmartLink';
 import styles from './FeaturedProjectsCarousel.module.css';
+import useHorizontalScrollControls from '@/hooks/useHorizontalScrollControls';
 
 function FeaturedProjectsCarousel({ projects }) {
-  const trackRef = React.useRef(null);
-  const [canScrollLeft, setCanScrollLeft] = React.useState(false);
-  const [canScrollRight, setCanScrollRight] = React.useState(false);
-
-  React.useEffect(() => {
-    const track = trackRef.current;
-    if (!track) return;
-
-    const updateScrollState = () => {
-      const { scrollLeft, scrollWidth, clientWidth } = track;
-      // small epsilon to avoid flicker at boundaries
-      const eps = 8;
-      setCanScrollLeft(scrollLeft > eps);
-      setCanScrollRight(scrollLeft + clientWidth < scrollWidth - eps);
-    };
-
-    updateScrollState();
-
-    track.addEventListener('scroll', updateScrollState, {
-      passive: true,
-    });
-    // Update on resize too
-    window.addEventListener('resize', updateScrollState);
-
-    return () => {
-      track.removeEventListener('scroll', updateScrollState);
-      window.removeEventListener('resize', updateScrollState);
-    };
-  }, [projects]);
-
-  const scrollByAmount = (direction) => {
-    const track = trackRef.current;
-    if (!track) return;
-    const amount = Math.round(track.clientWidth * 0.8);
-    track.scrollBy({
-      left: direction === 'left' ? -amount : amount,
-      behavior: 'smooth',
-    });
-  };
+  const { trackRef, canScrollLeft, canScrollRight, scrollByAmount } =
+    useHorizontalScrollControls();
 
   const trackClassName = clsx(
     styles.track,
