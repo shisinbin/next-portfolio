@@ -55,7 +55,7 @@
 .content ul,
 .content ol {
   margin-bottom: 1rem;
-  max-width: 72ch;
+  /* max-width: 72ch; */
 }
 .content ul,
 .content ol {

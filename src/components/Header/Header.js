@@ -22,14 +22,14 @@ function Header() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const dismissMenu = () => setIsMenuOpen(false);
 
-  const { scrollDir, hasScrolled } = useScrollDirection({
+  const { scrollDir, shadowActive } = useScrollDirection({
     threshold: 50,
   });
 
   const headerClass = clsx(
     styles.wrapper,
     styles[scrollDir === 'down' ? 'headerHidden' : 'headerVisible'],
-    hasScrolled && styles.headerScrolled
+    shadowActive && styles.headerScrolled
   );
 
   return (
