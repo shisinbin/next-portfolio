@@ -5,38 +5,46 @@ function useHorizontalScrollControls({
   scrollFactor = 0.8,
 } = {}) {
   const trackRef = React.useRef(null);
+
   const [canScrollLeft, setCanScrollLeft] = React.useState(false);
   const [canScrollRight, setCanScrollRight] = React.useState(false);
 
+  // Update scroll boundaries state
+  const updateScrollState = React.useCallback(() => {
+    const track = trackRef.current;
+    if (!track) return;
+
+    const { scrollLeft, scrollWidth, clientWidth } = track;
+
+    // Epsilons used to prevent flickers when close to edge
+    setCanScrollLeft(scrollLeft > eps);
+    setCanScrollRight(scrollLeft + clientWidth < scrollWidth - eps);
+  }, [eps]);
+
+  // Attach even listeners
   React.useEffect(() => {
     const track = trackRef.current;
     if (!track) return;
 
-    const update = () => {
-      const { scrollLeft, scrollWidth, clientWidth } = track;
+    updateScrollState();
 
-      setCanScrollLeft(scrollLeft > eps);
-      setCanScrollRight(scrollLeft + clientWidth < scrollWidth - eps);
-    };
-
-    update();
-
-    track.addEventListener('scroll', update, {
+    track.addEventListener('scroll', updateScrollState, {
       passive: true,
     });
-    window.addEventListener('resize', update);
+    window.addEventListener('resize', updateScrollState);
 
     return () => {
-      track.removeEventListener('scroll', update);
-      window.removeEventListener('resize', update);
+      track.removeEventListener('scroll', updateScrollState);
+      window.removeEventListener('resize', updateScrollState);
     };
-  }, [eps]);
+  }, [updateScrollState]);
 
-  const scrollByAmount = (direction) => {
+  const scroll = (direction) => {
     const track = trackRef.current;
     if (!track) return;
 
     const amount = Math.round(track.clientWidth * scrollFactor);
+
     track.scrollBy({
       left: direction === 'left' ? -amount : amount,
       behavior: 'smooth',
@@ -47,7 +55,7 @@ function useHorizontalScrollControls({
     trackRef,
     canScrollLeft,
     canScrollRight,
-    scrollByAmount,
+    scroll,
   };
 }
 

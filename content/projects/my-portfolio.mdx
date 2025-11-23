@@ -13,23 +13,29 @@ next: 'countries-react-app'
 
 ## Returning to fundamentals
 
-Having had a short break from web development prior to starting this project, for this portfolio site I felt I needed to simplify the stack to:
+<Callout>
+  Note to self: this article needs images. Lots of images.
+</Callout>
+
+Prior to starting this project, I had a short break from web development, so here I decided to simplify the stack to:
 
 - React
 - CSS Modules
 - Next.js
 
-I didn't want to layer on Tailwind, TypeScript, or other plug-and-play libraries, even though I had experience using them. Instead I wanted to get back to basics and return to the core principles of the component-driven React approach, as well as just get back to writing normal CSS. Next.js wasn't really necessary, but I wanted to familiarise myself with its App Router and the React Server Components 'mode' or paradigm.
+I didn't want to layer on Tailwind, TypeScript, or other plug-and-play libraries. Not that they aren't useful or I won't use them going forward. Rather I wanted to get back to basics and return to the core principles of React and its the component-driven approach, as well as get back to writing my own CSS. Considering it's a portfolio site after all, I figured the more I could build myself, the better.
+
+Next.js wasn't really necessary, but I wanted to familiarise myself with its App Router and the React Server Components 'mode' or paradigm, as this is where I see myself making more apps in future.
 
 In this article, I'll try to go over some of the main talking points looking back on how I've built it so far, focusing mainly on design decisions and technical challenges faced.
 
 ## The three-column PageLayout
 
-Initially for the layout, I had a single central column using a combination of two low-level components (MaxWidthWrapper and Section), that basically added some padding and set the inline margins to `auto` to centralise the content. This approach had served me well in the past.
+Initially for the layout, I had a single central column using a combination of two low-level components (MaxWidthWrapper and Section), that basically added some padding and set the inline margins to `auto` to help centralise the content.
 
 This worked fine initially, where any time I needed to have the content break slightly wider I could use negative margins. But later when I wanted to do fancier things like have sections of the page break even wider in a smooth way, using negative margins wasn't really feasible.
 
-After doing some research, I switched to a popular layout pattern:
+I remembered another site that had something similar to what I was looking for and after inspecting how it was done in the devtools, I switched to this layout pattern instead:
 
 ```css
 .layout {
@@ -44,11 +50,13 @@ After doing some research, I switched to a popular layout pattern:
 }
 ```
 
-The way it works is that we set the width of the central column to a _minimum_ of either a defined set width or 100%. So on smaller viewports, this width becomes 100%, and the side columns have zero width. But as the viewport grows beyond the defined internal width, the side columns equally share the available space up until the maximum width is hit.
+Instead of a single central column, we now have a **3-column grid**.
 
-This behaviour opened up different possibilities. By default, the content was funnelled towards the central column, but if I wanted I could assign any child of the grid to use the side columns too. This made things much smoother around key breakpoints, and negated the need for using media queries that could produce jerky effects.
+The way it works is the central column will have a minimum width of either 100% or a defined set width (`--trimmed-content-width`). So on smaller viewports, the width is 100% and the side columns have zero width. But as the viewport grows beyond `trimmed-content-width`, the side columns _equally share_ the available space until that maximum width is hit.
 
-This wouldn't be the first time I found myself being surprised at how useful and powerful CSS Grid can be for helping with layout issues where maybe Flexbox or flow layout might struggle.
+This behaviour opened up different possibilities with where I put sections on the page. By default, the content is funnelled towards the central column, but if I wanted I could assign any child of the grid to use the side columns too. This made things much smoother around key breakpoints, and negated the need for using media queries that could produce jerky effects.
+
+This wouldn't be the first time I found myself being surprised at how useful and powerful CSS Grid can be.
 
 ## Abstracting components
 
@@ -70,7 +78,7 @@ Initially, I thought the order mattered and so including the more speficic style
 
 A cool thing I've noticed on other sites is the 'hiding header' - a header that will _hide on scroll down, reappear on scroll up_. I wanted the same behaviour here, and it turned out to the trickier than I expected.
 
-My first attempt was simple: listen for `scroll` events, store the previous `scrollY` in state, and compare the two values:
+My first attempt was straightforward:
 
 ```js
 function useScrollDirection({ initialDirection = 'up' }) {
@@ -103,19 +111,19 @@ function useScrollDirection({ initialDirection = 'up' }) {
 }
 ```
 
-It works - but it's not ideal. Because `scrollY` changes constantly, the effect runs constantly too. The event listener is torn down and re-attached every time, and the component re-renders on every single scroll event. Scroll events can fire numerous times per second, so this approach doesn't scale well.
+This works - but it's not ideal. Because `scrollY` changes constantly, the effect runs constantly too. The event listener is torn down and re-attached every time, and the component re-renders on every single scroll event. Furthermore, scroll events could fire numerous times per second, so this approach doesn't scale well.
 
 ### Using refs + `requestAnimationFrame`
 
-The fix involves using a _ref_ to store scroll position instead of using _state_.
+The fix firstly involves using a _ref_ to store scroll position instead of using _state_.
 
 ```js
 const lastScrollY = React.useRef(0);
 ```
 
-Refs persist across renders without causing re-renders, so here this was perfect for storing scroll values rather than using state. Then I could attach the scroll listener **once**, as there was no need to put any scroll values in the effect's dependency array.
+Refs persist across renders without causing re-renders, so this was ideal for storing scroll values rather than using state. Crucially, it meant I didn't need to put any state carrying scroll values in the dependency array of the effect, so it only runs once and the event listener is only attached once.
 
-As for the other performance-related issue of updating React state too often, the solution for this involves wrapping our updating logic with [`requestAnimationFrame`](https://developer.mozilla.org/en-US/docs/Web/API/Window/requestAnimationFrame). This ensures we only compute the scroll direction at most once per animation frame (≈16ms), no matter how many raw scroll events fire between frames.
+Secondly, to prevent React state updating too often, we can wrap the updating logic with [`requestAnimationFrame`](https://developer.mozilla.org/en-US/docs/Web/API/Window/requestAnimationFrame) (RAF). Basically using this helps to throttle state events - so say if React wants to fire off 50 state changes in a millisecond (I don't know, it might be possible), then RAF helps to schedule a state change only once every _frame_ change (which I think is once every 16ms). So this helps to prevent our app from getting hammered with state changes and visually we don't notice any difference (we don't get any weird glitchy side-effects either).
 
 Here's the cleaned up version of the hook:
 
@@ -134,7 +142,6 @@ function useScrollDirection({ initialDirection = 'up' }) {
       if (Math.abs(current - lastScrollY.current) >= threshold) {
         const newDir = current > lastScrollY.current ? 'down' : 'up';
 
-        // Only update state when direction actually changes
         setScrollDir((prev) => (prev !== newDir ? newDir : prev));
 
         lastScrollY.current = Math.max(current, 0);
@@ -159,15 +166,17 @@ function useScrollDirection({ initialDirection = 'up' }) {
 }
 ```
 
-We use another ref - `ticking` - to help prevent multiple RAF updates. So, when the first scroll event comes in, we _schedule_ an update for the next animation frame. Any subsequent scroll events that come before that next frame are ignored. When RAF runs, we reset `ticking=false`, so that the next frame can schedule again.
+Note: the `ticking` ref helps to schedule the RAF updates. We use a ref here so that its value persists during re-renders, which is what we want.
 
-The end result: smooth animation, no wasted work, and a stable scroll listener that never gets re-created.
+The end result is we get a smooth animation when the header hides or reappears, our app isn't doing unnecessary state-changing work, and the scroll listener never gets re-created.
 
 ## The `ExpandableSection` accordion trick
 
-I wanted to build a section of the page that expanded when clicked. My first instinct was to do it the "React way": track open/closed state and run an effect to measure the section's height using a ref. It worked but I later ran into issues when resizing the window while the section was opened, and fixing this would have required adding a resize event listener (more logic).
+I wanted to build a section of the page that expanded when clicked. My first instinct was to do it the "React way". I had state tracking whether the user wanted the section opened or not and what the necessary height of the section needed to be to show all of it. An effect would fire every time the user opens the section, calculate and update the height state, and this in turn would be used in a CSS class, making it appear visible.
 
-Then I discovered that CSS Grid could do the heavy lifting to help achieve this accordion effect.
+It worked but later I noticed that if I resized the window while it was open, the section wouldn't naturally adjust because I had nothing to cater for this scenario. When the logical answer was to add a resize event listener, which would have required another effect, that's when the alarm bells started to go off and I began investigating other potential approaches.
+
+As it turned out, CSS Grid has a simple way to make this accordion-like effect really simple.
 
 <ExpandableSection>
 
@@ -175,7 +184,7 @@ Then I discovered that CSS Grid could do the heavy lifting to help achieve this 
 
 </ExpandableSection>
 
-Instead of measuring anything, the section becomes a one-row grid whose size is dependent on whether it's open. The collapsed state looks like this:
+The section becomes a one-row grid whose size is dependent on whether it's open. The collapsed state looks like this:
 
 ```css
 grid-template-rows: 0fr;
@@ -189,6 +198,16 @@ grid-template-rows: 1fr;
 
 Add a transition and that's basically the accordion effect achieved.
 
-So the final version uses React for the toggle and CSS Grid for everything else. A useful reminder that investigating whether CSS and in particular the layout system can help for such problems can help produce a simpler solution than leaning too heavily on JavaScript.
+So instead of having all that height measuring logic involving multiple state and effects, we only need to use React for the toggle and then CSS, and CSS Grid in particular, can handle everything else. Pretty cool, and a useful reminder of how darn helpful CSS can be to help solve challenges like this.
 
-## The `FeaturedProjectCarousel`
+## Building a reusable `Carousel`
+
+Maybe the most challenging part of the project was building a reusable carousel container from scratch. There were some similarites with other demanding technical challenges: parcelling off the scroll tracking logic into a custom hook that ran effects that attached event listeners, and component composition catering for different variants using CSS variables. So I won't go too deeply into those things. But there was an interesting aspect to this that's worth mentioning and that revolves around stacking-context's and avoiding z-index pain.
+
+I always cringe a little when I see in some apps that use parts of the page with a z-index with all sorts of wild and wonderfully big numbers. It's like they quickly went for the quick fix but just delaying another inevitable problem down the line. Or maybe it just feels inelegant.
+
+I actually did resort to this quick-fix a couple of times earlier in this project when I was having to fight between the hiding header and the mobile modal menu.
+
+For this challenge, I needed to co-ordinate two absolutely positioned side 'fades', two side buttons, the carousel track, and the individual cards inside them. Instead of giving some or all of these things appropriate z-index's, I remembered something I learnt about stacking context's.
+
+Here's where I talk about how I used isolation: isolate, leaned on the positioned layout system and then DOM order.

@@ -1,0 +1,85 @@
+.trackContainer {
+  position: relative;
+  isolation: isolate;
+  margin-bottom: 2rem;
+}
+.track {
+  position: relative;
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  gap: 32px;
+}
+.track::-webkit-scrollbar {
+  display: none;
+}
+.track {
+  scrollbar-width: none;
+}
+.slot {
+  scroll-snap-align: var(--carousel-snap, center);
+  max-width: var(--carousel-max-width, 380px);
+  flex: 0 0 var(--carousel-basis, 85%);
+}
+/* Fades */
+.fade {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 30px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 240ms ease;
+}
+.fadeLeft {
+  left: 0;
+  background: linear-gradient(90deg, var(--gray-200), transparent);
+}
+.fadeRight {
+  right: 0;
+  background: linear-gradient(90deg, transparent, var(--gray-200));
+}
+.fade.visible {
+  opacity: 1;
+}
+/* Scroll buttons */
+.scrollButton {
+  display: none;
+  position: absolute;
+  top: 50%;
+  width: 44px;
+  height: 44px;
+  transform: translateY(-50%);
+  border: none;
+  background: hsl(0deg 0% 100% / 0.9);
+  border-radius: 999px;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  will-change: transform, opacity;
+  transition: transform 140ms ease, opacity 140ms ease;
+}
+.scrollButton.left {
+  left: 8px;
+}
+.scrollButton.right {
+  right: 8px;
+}
+.scrollButton:hover:not(:disabled) {
+  transform: translateY(-50%) scale(1.1);
+}
+.scrollButton:disabled {
+  opacity: 0;
+  /* cursor: not-allowed; */
+  pointer-events: none;
+}
+
+@media (min-width: 768px) {
+  .scrollButton {
+    display: grid;
+    place-content: center;
+  }
+  .fade {
+    width: 80px;
+  }
+}
