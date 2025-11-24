@@ -26,9 +26,16 @@
 
 .label input:focus,
 .label textarea:focus {
-  outline: none;
+  outline: 2px solid transparent;
+  outline-offset: 2px;
   border-color: var(--accent-400);
   box-shadow: 0 0 0 2px hsl(var(--hue-accent) 90% 45% / 0.25);
+}
+
+.label input[data-invalid='true'],
+.label textarea[data-invalid='true'] {
+  border-color: hsl(0deg 65% 55%);
+  box-shadow: 0 0 0 2px hsl(0deg 70% 50% / 0.25);
 }
 
 .submitButton {
