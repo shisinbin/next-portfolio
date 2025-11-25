@@ -54,18 +54,14 @@ function ContactForm() {
       });
       setFeedback(validationErrorFeedback);
     } else {
-      setErrors((prev) => {
-        // const { [name]: _, ...errors } = prev;
-        // return errors;
-        const newErrors = { ...prev };
-        delete newErrors[name];
-        return newErrors;
-      });
+      const newErrors = { ...errors };
+      delete newErrors[name];
 
-      // If all errors gone, clear feedback
-      setFeedback((prev) =>
-        Object.keys(errors).length === 1 ? '' : prev
-      );
+      setErrors(newErrors);
+
+      if (Object.keys(newErrors).length === 0) {
+        setFeedback('');
+      }
     }
   };
 
@@ -99,6 +95,10 @@ function ContactForm() {
           ...result.data,
         }),
       });
+
+      if (!res.ok) {
+        throw new Error(`HTTP error, status = ${res.status}`);
+      }
 
       const data = await res.json();
 

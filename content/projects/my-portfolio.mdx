@@ -5,11 +5,13 @@ description: 'A modern portfolio built with Next.js, showcasing projects and wri
 tech: ['Next.js', 'React', 'CSS Modules']
 image: '/images/projects/portfolio-cover.png'
 links:
-  live: 'https://somewebsite.com'
-  github: 'https://github.com/shisinbin/portfolio'
+  live: 'https://shisinbin.dev'
+  github: 'https://github.com/shisinbin/next-portfolio'
 featured: true
 next: 'countries-react-app'
 ---
+
+[Source code](https://github.com/shisinbin/next-portfolio)
 
 ## Returning to fundamentals
 
@@ -17,7 +19,12 @@ next: 'countries-react-app'
   Note to self: this article needs images. Lots of images.
 </Callout>
 
-Prior to starting this project, I had a short break from web development, so here I decided to simplify the stack to:
+<Callout>
+  Second note to self: this reads more as a blog post, or even a
+  succession of multiple blog posts. Maybe we need to refine.
+</Callout>
+
+Prior to starting this project, I had a short break from web development. So here I decided to simplify the stack to:
 
 - React
 - CSS Modules
@@ -25,7 +32,7 @@ Prior to starting this project, I had a short break from web development, so her
 
 I didn't want to layer on Tailwind, TypeScript, or other plug-and-play libraries. Not that they aren't useful or I won't use them going forward. Rather I wanted to get back to basics and return to the core principles of React and its the component-driven approach, as well as get back to writing my own CSS. Considering it's a portfolio site after all, I figured the more I could build myself, the better.
 
-Next.js wasn't really necessary, but I wanted to familiarise myself with its App Router and the React Server Components 'mode' or paradigm, as this is where I see myself making more apps in future.
+Next.js wasn't really necessary, but I wanted to familiarise myself with its App Router and the React Server Components (RSC) 'mode' or paradigm, as this is where I see myself making more apps in future.
 
 In this article, I'll try to go over some of the main talking points looking back on how I've built it so far, focusing mainly on design decisions and technical challenges faced.
 
@@ -163,7 +170,6 @@ function useScrollDirection({ initialDirection = 'up' }) {
 
   return scrollDir;
 }
-}
 ```
 
 Note: the `ticking` ref helps to schedule the RAF updates. We use a ref here so that its value persists during re-renders, which is what we want.
@@ -202,12 +208,84 @@ So instead of having all that height measuring logic involving multiple state an
 
 ## Building a reusable `Carousel`
 
-Maybe the most challenging part of the project was building a reusable carousel container from scratch. There were some similarites with other demanding technical challenges: parcelling off the scroll tracking logic into a custom hook that ran effects that attached event listeners, and component composition catering for different variants using CSS variables. So I won't go too deeply into those things. But there was an interesting aspect to this that's worth mentioning and that revolves around stacking-context's and avoiding z-index pain.
+One of the trickier parts of this project was building a fully reusable carousel component from scratch. Some aspects were familiar - splitting the scroll-tracking into a custom hook with event listeners, using CSS variables to support different layout variants, and composing components out of smaller building blocks.
 
-I always cringe a little when I see in some apps that use parts of the page with a z-index with all sorts of wild and wonderfully big numbers. It's like they quickly went for the quick fix but just delaying another inevitable problem down the line. Or maybe it just feels inelegant.
+There was another aspect to this challenge that, while subtle, is worth mentioning: **stacking contexts**, and how avoiding the temptation to engage in "z-index wars" made the component far easier to reason about.
 
-I actually did resort to this quick-fix a couple of times earlier in this project when I was having to fight between the hiding header and the mobile modal menu.
+I always grimace a little when I see an app use huge `z-index` numbers scattered around the UI. It usually means the developer hit an unexpected stacking issue somewhere and reached for the understandable quick fix. It may solve the immediate problem, but it may only hold for a while, and at the least is confusing and seems inelegant.
 
-For this challenge, I needed to co-ordinate two absolutely positioned side 'fades', two side buttons, the carousel track, and the individual cards inside them. Instead of giving some or all of these things appropriate z-index's, I remembered something I learnt about stacking context's.
+I'll admit I did the exact same thing earlier in the project when wrestling with a hiding header and a mobile modal menu. It works... until it doesn't.
 
-Here's where I talk about how I used isolation: isolate, leaned on the positioned layout system and then DOM order.
+When building this carousel, the same problem surfaced again, and this time I wanted to avoid all of that. The component has several elements that need to overlap in a very controlled way:
+
+- the scrollable track,
+- the fading edge divs/masks,
+- the left/right scroll buttons,
+- and the cards inside the track.
+
+Instead of juggling z-index numbers and worrying about which elements may clash with other positioned siblings elsewhere, I realised I could simply **create a fresh stacking context** with a single line of code applied to the parent element:
+
+```css
+.trackContainer {
+  isolation: isolate;
+}
+```
+
+This forces everything inside the carousel to stack relative only to this container. No unexpected interference from outside layers, no leaking upwards into global stacking contexts.
+
+Once that's in place, and the internal pieces opt into the positioned layout, you can rely entirely on **DOM order** to determine overlap:
+
+```html
+<div className="{styles.trackContainer}">
+  {/* Base layer */}
+  <div className="{styles.track}">{/* cards */}</div>
+
+  {/* Fade layers (higher because they come later in the DOM) */}
+  <div className="{styles.fadeLeft}" />
+  <div className="{styles.fadeRight}" />
+
+  {/* Buttons (highest because they're last) */}
+  <button className="{styles.leftButton}">…</button>
+  <button className="{styles.rightButton}">…</button>
+</div>
+```
+
+It's a small detail in the context of a fairly involved feature, but it ended up being a really useful pattern - especially when thinking about the component-driven architecture of React and potentially different positioned elements in other parts of the app. It kept everything layered and predictable, without a single z-index number in sight.
+
+## Reworking the contact form - from server action to client logic
+
+I built a contact form where I used the [Web3Forms](https://web3forms.com/) service to help relay messages to my email. My first approach was to handle the logic through a **server action**, because we're in Next.js land, so why not? The server action performed validation with Zod, handled the API request, and returned structured state back to the client. This kept the client component lean.
+
+Maybe the most interesting part of that initial design was the _shape_ of the state returned by the server:
+
+```js
+stateStructure = {
+  status: 'idle', // idle || success || error
+  message: '',
+  errors: {},
+  values: {},
+};
+```
+
+By carrying both `errors` and `values` in state, we had a way of preserving the user's inputs and tracking attaching the appropriate error validation messages after the server action ran, allowing React to update the UI accordingly.
+
+This approach worked well... until it didn't. Web3Forms eventually began blocking requests made from server actions. Doing some digging, I found a 2024 blog post on their site - ironically titled [_"Create a Contact Form with Next.js Server Actions"_](https://web3forms.com/blog/nextjs-server-actions-contact-form) - that now contains a 2025 update explicitly advising developers **not** to use server actions for this anymore, instead recommending a fully client-side approach.
+
+### Refactoring the form to run entirely on the client
+
+Shifting everything to the client wasn't overly difficult, but once I did, I noticed that I naturally started thinking more "React-ively". With the server no longer involved, I ended up doing things like introducing multiple pieces of separate state, wiring up controlled inputs, and feeling more confident adding granular interactions.
+
+```js
+// The new raft of state - verbose, but cleanly separated
+const [formData, setFormData] = React.useState(initialFormData);
+const [status, setStatus] = React.useState('idle'); // idle || loading || success || error
+const [errors, setErrors] = React.useState({});
+const [touched, setTouched] = React.useState([]);
+const [feedback, setFeedback] = React.useState('');
+```
+
+I started tracking which fields had been interacted with (`touched`) so validation feedback felt more tactile. I was extracting individual rules from the Zod schema to help validate fields incrementally as users typed. The result was a much more responsive form - better than the server-driven version - simply because I was operating inside the React mental model.
+
+What's interesting is that I probably _could_ have implemented these interactive behaviours even with server actions in place. But mixing server-driven workflows with client components made it harder to stay in that mindset. I kept second-guessing when a component "should" be a server component, whether a React Suspense boundary belonged somewhere, whether something would be more efficient on the server, etc.
+
+Ultimately, building this form made me realise that thinking too much about RSC-style optimisations early on can pull attention away from the creative side of development. For future work, I'll probably try to stay in that familiar React client mindset first - then layer in optimisations once the interaction, behaviour, and experience feel right.
