@@ -1,11 +1,12 @@
 .wrapper {
   border: none;
-  margin: 4rem calc(var(--viewport-padding) * -1);
+  margin: 0 calc(var(--viewport-padding) * -1);
   background: hsl(65deg, 50%, 85%);
   /* background: palevioletred; */
   box-shadow: 0 4px 10px hsl(0deg 0% 0% / 0.1);
 
-  --ease-out: cubic-bezier(0.2, 0.5, 0.25, 1);
+  --transition-timing: cubic-bezier(0.2, 0.5, 0.25, 1);
+  --transition-length: 0.5s;
 }
 .headerButton {
   display: flex;
@@ -18,26 +19,47 @@
   cursor: pointer;
 }
 .icon {
-  transition: transform 0.5s var(--ease-out);
+  transition: transform var(--transition-length)
+    var(--transition-timing);
 }
 .iconOpen {
   transform: rotate(90deg);
 }
-.contentWrapper {
-  overflow: hidden;
-  /* transition: max-height 0.5s var(--ease-out); */
+
+.animationWrapper {
   display: grid;
   grid-template-rows: 0fr;
-  transition: grid-template-rows 0.5s var(--ease-out);
+  overflow: hidden;
+  transition: grid-template-rows var(--transition-length)
+    var(--transition-timing);
 }
-.open .contentWrapper {
+.open .animationWrapper {
   grid-template-rows: 1fr;
-  padding-bottom: 24px;
+}
+.animation {
+  min-height: 0;
+}
+.transformWrapper {
+  transform: translateY(-100%);
+  visibility: hidden;
+  transition: transform var(--transition-length)
+      var(--transition-timing),
+    visibility var(--transition-length) var(--transition-timing);
+}
+.open .transformWrapper {
+  transform: translateY(0);
+  visibility: visible;
+  transition: transform var(--transition-length)
+      var(--transition-timing),
+    visibility 0s linear;
+}
+/* Margins inside the container will throw animation height calculations off, better use paddings */
+.content * {
+  margin: 0;
 }
 .content {
-  min-height: 0; /* Needed for grid overflow rules */
   border-top: 1px solid var(--gray-200);
-  padding: 0 var(--viewport-padding);
+  padding-block: 2rem;
 }
 
 @media (min-width: 1024px) {

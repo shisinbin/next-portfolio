@@ -11,32 +11,19 @@ featured: true
 next: 'countries-react-app'
 ---
 
-[Source code](https://github.com/shisinbin/next-portfolio)
+A handcrafted portfolio built with **Next.js**, **React**, and a bunch of small but interesting UI challenges.
 
-## Returning to fundamentals
+This project was used as a sandbox to sharpen patterns, rethink mental models, and build small reusable components. The result is a site that feels simple on the surface, but hides quite a bit of thoughtful engineering underneath.
 
-<Callout>
-  Note to self: this article needs images. Lots of images.
-</Callout>
+## Highlights
 
-<Callout>
-  Second note to self: this reads more as a blog post, or even a
-  succession of multiple blog posts. Maybe we need to refine.
-</Callout>
+Below are the key features I'm most proud of. Each has a short overview, followed by a deeper explanation you can expand if you want the full story.
 
-Prior to starting this project, I had a short break from web development. So here I decided to simplify the stack to:
+### A flexible three-column layout using CSS Grid
 
-- React
-- CSS Modules
-- Next.js
+The layout uses a simple 3-column grid that lets most content sit naturally in the central column while certain sections expand outward for greater prominence. Because the side columns scale smoothly around breakpoints, the page feels consistent without having to rely on precise media queries.
 
-I didn't want to layer on Tailwind, TypeScript, or other plug-and-play libraries. Not that they aren't useful or I won't use them going forward. Rather I wanted to get back to basics and return to the core principles of React and its the component-driven approach, as well as get back to writing my own CSS. Considering it's a portfolio site after all, I figured the more I could build myself, the better.
-
-Next.js wasn't really necessary, but I wanted to familiarise myself with its App Router and the React Server Components (RSC) 'mode' or paradigm, as this is where I see myself making more apps in future.
-
-In this article, I'll try to go over some of the main talking points looking back on how I've built it so far, focusing mainly on design decisions and technical challenges faced.
-
-## The three-column PageLayout
+<ExpandableSection title='How the grid words'>
 
 Initially for the layout, I had a single central column using a combination of two low-level components (MaxWidthWrapper and Section), that basically added some padding and set the inline margins to `auto` to help centralise the content.
 
@@ -64,6 +51,69 @@ The way it works is the central column will have a minimum width of either 100% 
 This behaviour opened up different possibilities with where I put sections on the page. By default, the content is funnelled towards the central column, but if I wanted I could assign any child of the grid to use the side columns too. This made things much smoother around key breakpoints, and negated the need for using media queries that could produce jerky effects.
 
 This wouldn't be the first time I found myself being surprised at how useful and powerful CSS Grid can be.
+
+</ExpandableSection>
+
+### A scalable Card component system
+
+A shared base Card component keeps the structure, spacing and behaviour consistent for all cards, but its API is designed to allow aspects of its style to be changed, making it easy to introduce variants.
+
+<ExpandableSection title='The Card design'>
+
+One of the things I like about the component-driven architecture of React is that it lends itself to easily composing components based off other components. In a well-designed React app, I believe there is a **spectrum of components**, where on one side you have your low-level, generic components, and then as you move along the spectrum, the components become more complex or baked-in until you
+get to the entire app.
+
+At one point in developing this site, I had 3 different card components, and so this made me think about the spectrum and how I could refine my design. It made sense to extract a low-level, generic `Card`, from which the other three cards could become variants thereof.
+
+A tricky part was figuring out how to configure the correct API so that a variant card could override the base card styles. For example, if I wanted my card to have `8px` of `border-radius` instead of the default `12px`, how should that work?
+
+Initially, I thought the order mattered and so including the more speficic styles _after_ the base styles would solve this. But it didn't, presumably down to how CSS modules are compiled in React, I'm guessing. At any rate, a solution I found was to expose CSS properties in the base card to accept _CSS variables_ as values. Then in the CSS for the variant cards I could define what values these CSS variables would hold. This approach required adjusting my **mental model** for dealing with such abstraction of components when using CSS modules:
+
+<Callout>
+  The base component defines the API via CSS variables; variants
+  provide the values.
+</Callout>
+
+</ExpandableSection>
+
+### A smooth, scroll-reactive header
+
+The header hides and reveals itself based on scroll direction, and is constructured in such a way to minimise potential performance issues (stuttering, handler overhead).
+
+### A resuable Carousel with no z-index hacks
+
+The carousel contains overlapping layers - track, items, fades, buttons - but creates a clean stacking context so everything layers correctly without z-index juggling.
+
+### A client-side contact form with incremental Zod validation
+
+The form validates on submit first, then only the fields that failed begin validating as the user edits them, keeping feedback relevant without being noisy.
+
+---
+
+[Source code](https://github.com/shisinbin/next-portfolio)
+
+## Returning to fundamentals
+
+<Callout>
+  Note to self: this article needs images. Lots of images.
+</Callout>
+
+<Callout>
+  Second note to self: this reads more as a blog post, or even a
+  succession of multiple blog posts. Maybe we need to refine.
+</Callout>
+
+Prior to starting this project, I had a short break from web development. So here I decided to simplify the stack to:
+
+- React
+- CSS Modules
+- Next.js
+
+I didn't want to layer on Tailwind, TypeScript, or other plug-and-play libraries. Not that they aren't useful or I won't use them going forward. Rather I wanted to get back to basics and return to the core principles of React and its the component-driven approach, as well as get back to writing my own CSS. Considering it's a portfolio site after all, I figured the more I could build myself, the better.
+
+Next.js wasn't really necessary, but I wanted to familiarise myself with its App Router and the React Server Components (RSC) 'mode' or paradigm, as this is where I see myself making more apps in future.
+
+In this article, I'll try to go over some of the main talking points looking back on how I've built it so far, focusing mainly on design decisions and technical challenges faced.
 
 ## Abstracting components
 

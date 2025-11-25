@@ -5,7 +5,11 @@ import { ChevronRight } from 'react-feather';
 
 import styles from './ExpandableSection.module.css';
 
-function ExpandableSection({ children, defaultOpen = false }) {
+function ExpandableSection({
+  title = 'Extra info',
+  children,
+  defaultOpen = false,
+}) {
   const [isOpen, setIsOpen] = React.useState(defaultOpen);
 
   return (
@@ -21,10 +25,14 @@ function ExpandableSection({ children, defaultOpen = false }) {
             isOpen ? styles.iconOpen : ''
           }`}
         />
-        <span>Extra info</span>
+        <span>{title}</span>
       </button>
-      <div className={styles.contentWrapper}>
-        <div className={styles.content}>{children}</div>
+      <div className={styles.animationWrapper}>
+        <div className={styles.animation}>
+          <div className={styles.transformWrapper}>
+            <div className={styles.content}>{children}</div>
+          </div>
+        </div>
       </div>
     </section>
   );
