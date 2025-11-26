@@ -2,7 +2,7 @@
 title: 'Personal Portfolio Site'
 date: '2025-11-01'
 description: 'A modern portfolio built with Next.js, showcasing projects and writing.'
-tech: ['Next.js', 'React', 'CSS Modules']
+tech: ['Next.js', 'React', 'CSS Modules', 'MDX']
 image: '/images/projects/portfolio-cover.png'
 links:
   live: 'https://shisinbin.dev'
@@ -11,25 +11,23 @@ featured: true
 next: 'countries-react-app'
 ---
 
-A handcrafted portfolio built with **Next.js**, **React**, and a bunch of small but interesting UI challenges.
+[Source code](https://github.com/shisinbin/next-portfolio)
 
-This project was used as a sandbox to sharpen patterns, rethink mental models, and build small reusable components. The result is a site that feels simple on the surface, but hides quite a bit of thoughtful engineering underneath.
+I recently came back to web development after a short break, so I wanted this portfolio project to feel like a _reset_ - something built with a simple stack and no unnecessary abstractions. I stuck to **React**, **Next.js**, and **CSS Modules**, avoiding Tailwind, TypeScript, and other utilities so I could get back to basics.
 
-## Highlights
+The result is a small project that helped me shake off the rust and rebuild some fluency. So far, I've run into a handful of genuinely interesting problems - things that pushed me to revisit mental models, rethink component boundaries, and get comfortable writing CSS again.
 
-Below are the key features I'm most proud of. Each has a short overview, followed by a deeper explanation you can expand if you want the full story.
+Below are the highlights. Each includes a short summary, plus an optional _deep dive_ if you want the details.
 
-### A flexible three-column layout using CSS Grid
+## A flexible three-column layout using CSS Grid
 
-The layout uses a simple 3-column grid that lets most content sit naturally in the central column while certain sections expand outward for greater prominence. Because the side columns scale smoothly around breakpoints, the page feels consistent without having to rely on precise media queries.
+The layout uses a simple 3-column grid that lets most content sit naturally in the central column while certain sections expand outward for greater prominence. Because the side columns scale smoothly around breakpoints, the page feels consistent without having to rely on precise media queries. This is
 
-<ExpandableSection title='How the grid words'>
+<ExpandableSection title='How the layout grid works'>
 
-Initially for the layout, I had a single central column using a combination of two low-level components (MaxWidthWrapper and Section), that basically added some padding and set the inline margins to `auto` to help centralise the content.
+The grid layout system was borne from wanting to do slightly fancier things with the layout. In particular, I wanted to have sections of the page break out and pull wider to help give them more prominence on wider viewports (rather than there being a lot of empty extra space on the sides).
 
-This worked fine initially, where any time I needed to have the content break slightly wider I could use negative margins. But later when I wanted to do fancier things like have sections of the page break even wider in a smooth way, using negative margins wasn't really feasible.
-
-I remembered another site that had something similar to what I was looking for and after inspecting how it was done in the devtools, I switched to this layout pattern instead:
+Initially I was just using a simple centred column, but then eventually switched to using a 3-column grid for each page, and it looks something like this:
 
 ```css
 .layout {
@@ -44,21 +42,19 @@ I remembered another site that had something similar to what I was looking for a
 }
 ```
 
-Instead of a single central column, we now have a **3-column grid**.
+The central column (which remains the main content column) has a _minimum width_ of either 100% or something defined (`--trimmed-content-width`). This means on smaller viewports, this column's width is 100% while the side columns will be zero width. But as the viewport grows beyond `trimmed-content-width`, the side columns will _equally share_ the available space until that maximum width is hit.
 
-The way it works is the central column will have a minimum width of either 100% or a defined set width (`--trimmed-content-width`). So on smaller viewports, the width is 100% and the side columns have zero width. But as the viewport grows beyond `trimmed-content-width`, the side columns _equally share_ the available space until that maximum width is hit.
+So say you have a section spanning all 3 columns - on smaller viewports it will appear like the rest of the content as the side columns have zero width. But as the viewport increases, these sections will _smoothly grow_ in size.
 
-This behaviour opened up different possibilities with where I put sections on the page. By default, the content is funnelled towards the central column, but if I wanted I could assign any child of the grid to use the side columns too. This made things much smoother around key breakpoints, and negated the need for using media queries that could produce jerky effects.
-
-This wouldn't be the first time I found myself being surprised at how useful and powerful CSS Grid can be.
+This made things so much easier than what I was trying to do when I had just the single column, where I was using negative margins and having to be really precise around breakpoints to help minimise "jerky jumps".
 
 </ExpandableSection>
 
-### A scalable Card component system
+## A scalable Card component system
 
-A shared base Card component keeps the structure, spacing and behaviour consistent for all cards, but its API is designed to allow aspects of its style to be changed, making it easy to introduce variants.
+A base-level, generic `Card` component is used by a group of different cards, acting as a central area for shared logic and sytles, and making it easy to introduce new "variant" card components easily.
 
-<ExpandableSection title='The Card design'>
+<ExpandableSection title='The Spectrum of Components'>
 
 One of the things I like about the component-driven architecture of React is that it lends itself to easily composing components based off other components. In a well-designed React app, I believe there is a **spectrum of components**, where on one side you have your low-level, generic components, and then as you move along the spectrum, the components become more complex or baked-in until you
 get to the entire app.
@@ -67,75 +63,21 @@ At one point in developing this site, I had 3 different card components, and so 
 
 A tricky part was figuring out how to configure the correct API so that a variant card could override the base card styles. For example, if I wanted my card to have `8px` of `border-radius` instead of the default `12px`, how should that work?
 
-Initially, I thought the order mattered and so including the more speficic styles _after_ the base styles would solve this. But it didn't, presumably down to how CSS modules are compiled in React, I'm guessing. At any rate, a solution I found was to expose CSS properties in the base card to accept _CSS variables_ as values. Then in the CSS for the variant cards I could define what values these CSS variables would hold. This approach required adjusting my **mental model** for dealing with such abstraction of components when using CSS modules:
+Initially, I thought the order mattered and so including the more specific styles _after_ the base styles would solve this. But it didn't, presumably down to how CSS modules are compiled in React, I'm guessing. At any rate, a solution I found was to expose CSS properties in the base card to accept **CSS variables** as values. Then in the variant cards I could modify these CSS variables to help achieve a certain look.
 
-<Callout>
-  The base component defines the API via CSS variables; variants
-  provide the values.
-</Callout>
+This approach required adjusting my _mental model_ for dealing with such abstraction of components when using CSS modules: the base component defines the API via CSS variables; variants provide the values.
 
 </ExpandableSection>
 
-### A smooth, scroll-reactive header
+## A smooth, scroll-reactive header
 
-The header hides and reveals itself based on scroll direction, and is constructured in such a way to minimise potential performance issues (stuttering, handler overhead).
+A header that hides as you scroll down, reveals as you scroll up - a challenge that requires giving more thought to potential _performance_ issues, like minimising hammering React with lots of re-renders, potentially causing "jerky" UI effects.
 
-### A resuable Carousel with no z-index hacks
-
-The carousel contains overlapping layers - track, items, fades, buttons - but creates a clean stacking context so everything layers correctly without z-index juggling.
-
-### A client-side contact form with incremental Zod validation
-
-The form validates on submit first, then only the fields that failed begin validating as the user edits them, keeping feedback relevant without being noisy.
-
----
-
-[Source code](https://github.com/shisinbin/next-portfolio)
-
-## Returning to fundamentals
-
-<Callout>
-  Note to self: this article needs images. Lots of images.
-</Callout>
-
-<Callout>
-  Second note to self: this reads more as a blog post, or even a
-  succession of multiple blog posts. Maybe we need to refine.
-</Callout>
-
-Prior to starting this project, I had a short break from web development. So here I decided to simplify the stack to:
-
-- React
-- CSS Modules
-- Next.js
-
-I didn't want to layer on Tailwind, TypeScript, or other plug-and-play libraries. Not that they aren't useful or I won't use them going forward. Rather I wanted to get back to basics and return to the core principles of React and its the component-driven approach, as well as get back to writing my own CSS. Considering it's a portfolio site after all, I figured the more I could build myself, the better.
-
-Next.js wasn't really necessary, but I wanted to familiarise myself with its App Router and the React Server Components (RSC) 'mode' or paradigm, as this is where I see myself making more apps in future.
-
-In this article, I'll try to go over some of the main talking points looking back on how I've built it so far, focusing mainly on design decisions and technical challenges faced.
-
-## Abstracting components
-
-One of the things I like about the component-driven architecture of React is that it lends itself to easily composing components based off other components. In a well-designed React app, I believe there is a **spectrum of components**, where on one side you have your low-level, generic components, and then as you move along the spectrum, the components become more complex or baked-in until you
-get to the entire app.
-
-At one point in developing this site, I had 3 different card components, and so this made me think about the spectrum and how I could refine my design. It made sense to extract a low-level, generic `Card`, from which the other three cards could become variants thereof.
-
-A tricky part was figuring out how to configure the correct API so that a variant card could override the base card styles. For example, if I wanted my card to have `8px` of `border-radius` instead of the default `12px`, how should that work?
-
-Initially, I thought the order mattered and so including the more speficic styles _after_ the base styles would solve this. But it didn't, presumably down to how CSS modules are compiled in React, I'm guessing. At any rate, a solution I found was to expose CSS properties in the base card to accept _CSS variables_ as values. Then in the CSS for the variant cards I could define what values these CSS variables would hold. This approach required adjusting my **mental model** for dealing with such abstraction of components when using CSS modules:
-
-<Callout>
-  The base component defines the API via CSS variables; variants
-  provide the values.
-</Callout>
-
-## The hiding `Header`
+<ExpandableSection title='Scroll direction, RAF-throttling, and the hook design'>
 
 A cool thing I've noticed on other sites is the 'hiding header' - a header that will _hide on scroll down, reappear on scroll up_. I wanted the same behaviour here, and it turned out to the trickier than I expected.
 
-My first attempt was straightforward:
+My first attempt involved writing a custom hook:
 
 ```js
 function useScrollDirection({ initialDirection = 'up' }) {
@@ -170,17 +112,15 @@ function useScrollDirection({ initialDirection = 'up' }) {
 
 This works - but it's not ideal. Because `scrollY` changes constantly, the effect runs constantly too. The event listener is torn down and re-attached every time, and the component re-renders on every single scroll event. Furthermore, scroll events could fire numerous times per second, so this approach doesn't scale well.
 
-### Using refs + `requestAnimationFrame`
-
-The fix firstly involves using a _ref_ to store scroll position instead of using _state_.
+We can begin to fix this by firstly using **refs** to track scroll position instead of state.
 
 ```js
 const lastScrollY = React.useRef(0);
 ```
 
-Refs persist across renders without causing re-renders, so this was ideal for storing scroll values rather than using state. Crucially, it meant I didn't need to put any state carrying scroll values in the dependency array of the effect, so it only runs once and the event listener is only attached once.
+Refs persist across renders without causing re-renders, so this was ideal here as I could use this in the effect and avoid having to include state in the dependency array. This means the effect only runs once and the event listener is only attached once.
 
-Secondly, to prevent React state updating too often, we can wrap the updating logic with [`requestAnimationFrame`](https://developer.mozilla.org/en-US/docs/Web/API/Window/requestAnimationFrame) (RAF). Basically using this helps to throttle state events - so say if React wants to fire off 50 state changes in a millisecond (I don't know, it might be possible), then RAF helps to schedule a state change only once every _frame_ change (which I think is once every 16ms). So this helps to prevent our app from getting hammered with state changes and visually we don't notice any difference (we don't get any weird glitchy side-effects either).
+To prevent React state updating too often, we can wrap the updating logic with [`requestAnimationFrame`](https://developer.mozilla.org/en-US/docs/Web/API/Window/requestAnimationFrame) (RAF). Basically using this helps to throttle state events - so say if React wants to fire off 50 state changes in a millisecond, then RAF helps to schedule a state change only once every _frame_ change (roughly once every 16ms). This helps to prevent our app from getting hammered with state changes and visually we don't notice any difference (we don't get any weird glitchy side-effects either).
 
 Here's the cleaned up version of the hook:
 
@@ -226,19 +166,105 @@ Note: the `ticking` ref helps to schedule the RAF updates. We use a ref here so 
 
 The end result is we get a smooth animation when the header hides or reappears, our app isn't doing unnecessary state-changing work, and the scroll listener never gets re-created.
 
-## The `ExpandableSection` accordion trick
+</ExpandableSection>
+
+## A reusable Carousel with no z-index hacks
+
+A scrollable carousel containing overlapping layers - track, items, fades, buttons. Creates a stacking context so everything layers correctly without getting engaged in "z-index wars".
+
+<ExpandableSection title='How creating a stacking context is useful for multi-layered components'>
+
+Carousels have a lot of overlapping elements:
+
+- the scrollable track,
+- the fading edge masks,
+- the left/right buttons,
+- and the cards inside the track.
+
+Instead of trying to coordinate these layers with different z-index numbers, I used a different approach. I created a new **stacking context** and I did it with just one line on the parent element:
+
+```css
+.trackContainer {
+  isolation: isolate;
+}
+```
+
+Doing this helps to isolate the carousel so all stacking happens _within it_, and there's no intereference from elsewhere in the app.
+
+Once that's in place (and all our layers opt into the positioned layout), stacking can be controlled entirely by **DOM order**:
+
+```html
+<div className="{styles.trackContainer}">
+  {/* Base layer */}
+  <div className="{styles.track}">{/* cards */}</div>
+
+  {/* Fade layers (higher because they come later in the DOM) */}
+  <div className="{styles.fadeLeft}" />
+  <div className="{styles.fadeRight}" />
+
+  {/* Buttons (highest because they're last) */}
+  <button className="{styles.leftButton}">…</button>
+  <button className="{styles.rightButton}">…</button>
+</div>
+```
+
+No z-index values, no clashes with other parts of the app.
+
+It's a simple technique, but it makes the component so much easier to reuse and navigate, which is so important in a component-driven framework like React.
+
+</ExpandableSection>
+
+## A client-side contact form with incremental Zod validation
+
+The form validates on submit first, then only the fields that failed begin validating as the user edits them, keeping feedback relevant without being noisy.
+
+<ExpandableSection title='Being more "React-ive" in the client'>
+
+The contact form started off with using a server action in its workflow, mostly because I figured it made sense seeing as how I was using Next.js. The action validated inputs with Zod, submitted the request to Web3Forms, and returned structured state back to the client. The returned state looked something like this:
+
+```js
+stateStructure = {
+  status: 'idle', // idle || success || error
+  message: '',
+  errors: {},
+  values: {},
+};
+```
+
+Carrying both `errors` and `values` made it easy to preserve input values and attach validation messages back to the client after the server action had finished.
+
+This approach worked well until Web3Forms began blocking server-action requests. A blog post of theirs - ironically titled [_"Create a Contact Form with Next.js Server Actions"_](https://web3forms.com/blog/nextjs-server-actions-contact-form) - now explicitly recommends _not_ doing that and instead doing everything in the client.
+
+The refactor was straightforward, but it changed how I approached the feature. With everything running in the client, I naturally shifted back into a more "React-like" mental model.
+
+```js
+// The new raft of state, cleanly separated
+const [formData, setFormData] = React.useState(initialFormData);
+const [status, setStatus] = React.useState('idle'); // idle || loading || success || error
+const [errors, setErrors] = React.useState({});
+const [touched, setTouched] = React.useState([]);
+const [feedback, setFeedback] = React.useState('');
+```
+
+I started marking fields as touched, validating individual rules as users typed after an initial failed submission, thinking more about improving the UI experience.
+
+And here's the interesting part: I probably _could_ have implemented these patterns even with server actions in play. Maybe the mental overhead of mixing server and client components around handling form submissions made me hesitate.
+
+Once everything moved client-side, that mental fog dissipated and the interaction design improved immediately. And it was probably the most excited I felt while building this app.
+
+It made me realise that thinking too hard about React Server Components optimisations early on can stifle creativity. Or maybe in an app such as this, where there aren't too many database interactions or opportunities to pick up these small RSC-style efficiencies, then it's better to just take more of a client-first approach.
+
+</ExpandableSection>
+
+---
+
+<ExpandableSection title='Bonus: This expanding CSS Grid accordion'>
 
 I wanted to build a section of the page that expanded when clicked. My first instinct was to do it the "React way". I had state tracking whether the user wanted the section opened or not and what the necessary height of the section needed to be to show all of it. An effect would fire every time the user opens the section, calculate and update the height state, and this in turn would be used in a CSS class, making it appear visible.
 
 It worked but later I noticed that if I resized the window while it was open, the section wouldn't naturally adjust because I had nothing to cater for this scenario. When the logical answer was to add a resize event listener, which would have required another effect, that's when the alarm bells started to go off and I began investigating other potential approaches.
 
 As it turned out, CSS Grid has a simple way to make this accordion-like effect really simple.
-
-<ExpandableSection>
-
-### Pretty cool, huh?
-
-</ExpandableSection>
 
 The section becomes a one-row grid whose size is dependent on whether it's open. The collapsed state looks like this:
 
@@ -256,86 +282,4 @@ Add a transition and that's basically the accordion effect achieved.
 
 So instead of having all that height measuring logic involving multiple state and effects, we only need to use React for the toggle and then CSS, and CSS Grid in particular, can handle everything else. Pretty cool, and a useful reminder of how darn helpful CSS can be to help solve challenges like this.
 
-## Building a reusable `Carousel`
-
-One of the trickier parts of this project was building a fully reusable carousel component from scratch. Some aspects were familiar - splitting the scroll-tracking into a custom hook with event listeners, using CSS variables to support different layout variants, and composing components out of smaller building blocks.
-
-There was another aspect to this challenge that, while subtle, is worth mentioning: **stacking contexts**, and how avoiding the temptation to engage in "z-index wars" made the component far easier to reason about.
-
-I always grimace a little when I see an app use huge `z-index` numbers scattered around the UI. It usually means the developer hit an unexpected stacking issue somewhere and reached for the understandable quick fix. It may solve the immediate problem, but it may only hold for a while, and at the least is confusing and seems inelegant.
-
-I'll admit I did the exact same thing earlier in the project when wrestling with a hiding header and a mobile modal menu. It works... until it doesn't.
-
-When building this carousel, the same problem surfaced again, and this time I wanted to avoid all of that. The component has several elements that need to overlap in a very controlled way:
-
-- the scrollable track,
-- the fading edge divs/masks,
-- the left/right scroll buttons,
-- and the cards inside the track.
-
-Instead of juggling z-index numbers and worrying about which elements may clash with other positioned siblings elsewhere, I realised I could simply **create a fresh stacking context** with a single line of code applied to the parent element:
-
-```css
-.trackContainer {
-  isolation: isolate;
-}
-```
-
-This forces everything inside the carousel to stack relative only to this container. No unexpected interference from outside layers, no leaking upwards into global stacking contexts.
-
-Once that's in place, and the internal pieces opt into the positioned layout, you can rely entirely on **DOM order** to determine overlap:
-
-```html
-<div className="{styles.trackContainer}">
-  {/* Base layer */}
-  <div className="{styles.track}">{/* cards */}</div>
-
-  {/* Fade layers (higher because they come later in the DOM) */}
-  <div className="{styles.fadeLeft}" />
-  <div className="{styles.fadeRight}" />
-
-  {/* Buttons (highest because they're last) */}
-  <button className="{styles.leftButton}">…</button>
-  <button className="{styles.rightButton}">…</button>
-</div>
-```
-
-It's a small detail in the context of a fairly involved feature, but it ended up being a really useful pattern - especially when thinking about the component-driven architecture of React and potentially different positioned elements in other parts of the app. It kept everything layered and predictable, without a single z-index number in sight.
-
-## Reworking the contact form - from server action to client logic
-
-I built a contact form where I used the [Web3Forms](https://web3forms.com/) service to help relay messages to my email. My first approach was to handle the logic through a **server action**, because we're in Next.js land, so why not? The server action performed validation with Zod, handled the API request, and returned structured state back to the client. This kept the client component lean.
-
-Maybe the most interesting part of that initial design was the _shape_ of the state returned by the server:
-
-```js
-stateStructure = {
-  status: 'idle', // idle || success || error
-  message: '',
-  errors: {},
-  values: {},
-};
-```
-
-By carrying both `errors` and `values` in state, we had a way of preserving the user's inputs and tracking attaching the appropriate error validation messages after the server action ran, allowing React to update the UI accordingly.
-
-This approach worked well... until it didn't. Web3Forms eventually began blocking requests made from server actions. Doing some digging, I found a 2024 blog post on their site - ironically titled [_"Create a Contact Form with Next.js Server Actions"_](https://web3forms.com/blog/nextjs-server-actions-contact-form) - that now contains a 2025 update explicitly advising developers **not** to use server actions for this anymore, instead recommending a fully client-side approach.
-
-### Refactoring the form to run entirely on the client
-
-Shifting everything to the client wasn't overly difficult, but once I did, I noticed that I naturally started thinking more "React-ively". With the server no longer involved, I ended up doing things like introducing multiple pieces of separate state, wiring up controlled inputs, and feeling more confident adding granular interactions.
-
-```js
-// The new raft of state - verbose, but cleanly separated
-const [formData, setFormData] = React.useState(initialFormData);
-const [status, setStatus] = React.useState('idle'); // idle || loading || success || error
-const [errors, setErrors] = React.useState({});
-const [touched, setTouched] = React.useState([]);
-const [feedback, setFeedback] = React.useState('');
-```
-
-I started tracking which fields had been interacted with (`touched`) so validation feedback felt more tactile. I was extracting individual rules from the Zod schema to help validate fields incrementally as users typed. The result was a much more responsive form - better than the server-driven version - simply because I was operating inside the React mental model.
-
-What's interesting is that I probably _could_ have implemented these interactive behaviours even with server actions in place. But mixing server-driven workflows with client components made it harder to stay in that mindset. I kept second-guessing when a component "should" be a server component, whether a React Suspense boundary belonged somewhere, whether something would be more efficient on the server, etc.
-
-Ultimately, building this form made me realise that thinking too much about RSC-style optimisations early on can pull attention away from the creative side of development. For future work, I'll probably try to stay in that familiar React client mindset first - then layer in optimisations once the interaction, behaviour, and experience feel right.
+</ExpandableSection>
