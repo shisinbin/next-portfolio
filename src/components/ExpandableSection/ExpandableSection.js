@@ -25,7 +25,7 @@ function ExpandableSection({
             isOpen ? styles.iconOpen : ''
           }`}
         />
-        <span>{title}</span>
+        <span className={styles.headerButtonText}>{title}</span>
       </button>
       <div className={styles.animationWrapper}>
         <div className={styles.animation}>

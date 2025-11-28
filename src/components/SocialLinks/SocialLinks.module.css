@@ -1,11 +1,10 @@
 .wrapper {
-  margin-top: var(--space-lg);
   text-align: center;
 }
 .heading {
   margin-bottom: var(--space-md);
   font-size: 1.25rem;
-  font-weight: 600;
+  font-weight: 500;
 }
 .list {
   padding: 0;

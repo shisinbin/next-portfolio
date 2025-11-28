@@ -14,8 +14,8 @@ function Footer() {
         </div>
 
         <nav className={styles.nav}>
+          <Link href='/about'>About</Link>
           <Link href='/work'>Work</Link>
-          <Link href='/blog'>Blog</Link>
           <Link href='/contact'>Contact</Link>
         </nav>
 

@@ -1,5 +1,5 @@
 import PageLayout from '@/components/PageLayout';
-import SectionHeading from '@/components/SectionHeading';
+import PageHeading from '@/components/PageHeading';
 import ContactForm from '@/components/ContactForm';
 import SocialLinks from '@/components/SocialLinks';
 import styles from './contactpage.module.css';
@@ -12,7 +12,7 @@ function ContactPage() {
   return (
     <PageLayout>
       <section>
-        <SectionHeading>Contact Page</SectionHeading>
+        <PageHeading>Contact Page</PageHeading>
         <div className={styles.content}>
           <p className={styles.intro}>
             Whether you&apos;d like to discuss a project, collaborate,

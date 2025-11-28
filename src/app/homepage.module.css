@@ -5,9 +5,9 @@
 }
 
 .title {
-  font-size: 2rem;
+  /* font-size: 2rem; */
   /* line-height: 1.2; */
-  margin-bottom: 1rem;
+  margin-bottom: 1.125rem;
 }
 
 .accent {
@@ -16,7 +16,7 @@
 
 .subtitle {
   color: var(--color-text-muted);
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   max-width: 40ch;
   margin-inline: auto;
   margin-bottom: 2rem;

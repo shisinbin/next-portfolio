@@ -1,5 +1,5 @@
 import PageLayout from '@/components/PageLayout';
-import SectionHeading from '@/components/SectionHeading';
+import PageHeading from '@/components/PageHeading';
 import ProjectCard from '@/components/ProjectCard';
 import Grid from '@/components/Grid';
 import { getAllProjects } from '@/lib/projects';
@@ -15,7 +15,7 @@ async function WorkPage() {
   return (
     <PageLayout>
       <section aria-labelledby='work-title'>
-        <SectionHeading id='work-title'>Work</SectionHeading>
+        <PageHeading id='work-title'>Work</PageHeading>
         <p className={styles.intro}>
           Here&apos;s a collection of projects I&apos;ve worked on -
           some professional, some personal.

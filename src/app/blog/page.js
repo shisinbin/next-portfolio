@@ -1,5 +1,5 @@
 import PageLayout from '@/components/PageLayout';
-import SectionHeading from '@/components/SectionHeading';
+import PageHeading from '@/components/PageHeading';
 import styles from './blogpage.module.css';
 
 export const metadata = {
@@ -10,7 +10,7 @@ function BlogPage() {
   return (
     <PageLayout>
       <section>
-        <SectionHeading>Blog</SectionHeading>
+        <PageHeading>Blog</PageHeading>
         <p className={styles.intro}>
           A quiet room for now. Words arriving shortly.
         </p>

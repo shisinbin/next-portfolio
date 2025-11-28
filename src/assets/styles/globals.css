@@ -149,6 +149,23 @@ html {
     25px 50px 48.2px -4.2px hsl(var(--shadow-color) / 0.16);
 }
 
+/* TYPOGRAPHY */
+h1 {
+  font-size: clamp(2rem, 5vw, 2.5rem);
+  line-height: 1.1;
+  font-weight: 700;
+}
+h2 {
+  font-size: clamp(1.5rem, 4vw, 1.75rem);
+  line-height: 1.2;
+  font-weight: 600;
+}
+h3 {
+  font-size: clamp(1.25rem, 4vw, 1.5rem);
+  line-height: 1.3;
+  font-weight: 500;
+}
+
 /* CUSTOM STYLES */
 body {
   min-height: 100vh;
@@ -220,7 +237,6 @@ body > main {
 
 html {
   font-family: var(--font-family), system-ui, sans-serif;
-
   /*
     Reserves space for the scrollbar, regardless if there is one.
     Helps avoid layout shifts
@@ -231,8 +247,18 @@ code {
   font-family: var(--font-family-mono);
 }
 
+p {
+  font-size: 1.125rem;
+}
+
 @media (min-width: 544px) {
   html {
     --viewport-padding: 24px;
   }
 }
+
+/* @media (min-width: 768px) {
+  html {
+    --viewport-padding: 48px;
+  }
+} */

@@ -2,14 +2,14 @@ import { MDXRemote } from 'next-mdx-remote/rsc';
 import { notFound } from 'next/navigation';
 import { format } from 'date-fns';
 import PageLayout from '@/components/PageLayout';
-import SectionHeading from '@/components/SectionHeading';
 import { getProjectBySlug } from '@/lib/projects';
 import { COMPONENT_MAP } from '@/lib/mdx-components';
 import styles from './projectpage.module.css';
-import Link from 'next/link';
-import { ArrowLeft, CornerLeftUp } from 'react-feather';
+
+import { ArrowLeft } from 'react-feather';
 import SmartLink from '@/components/SmartLink';
 import NextProject from '@/components/NextProject';
+import PageHeading from '@/components/PageHeading';
 
 export async function generateMetadata({ params }) {
   const p = await params;
@@ -45,10 +45,15 @@ async function ProjectPage({ params }) {
             Back to all projects
           </SmartLink>
         </nav>
-        <SectionHeading>{frontmatter.title}</SectionHeading>
-        <p className={styles.date}>
-          Last updated on <time>{humanisedDate}</time>
-        </p>
+        <PageHeading
+          subtitle={
+            <p>
+              Last updated on <time>{humanisedDate}</time>
+            </p>
+          }
+        >
+          {frontmatter.title}
+        </PageHeading>
         <div className={styles.content}>
           <MDXRemote source={content} components={COMPONENT_MAP} />
         </div>

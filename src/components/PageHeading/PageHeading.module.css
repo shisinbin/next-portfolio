@@ -1,0 +1,16 @@
+.heading {
+  margin-bottom: 2.5rem;
+}
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 2rem;
+}
+.headingWithSubtitle {
+  margin-bottom: 0;
+}
+.subtitle {
+  color: var(--color-text-muted);
+  font-size: 1rem;
+}

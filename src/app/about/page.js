@@ -1,6 +1,6 @@
 import PageLayout from '@/components/PageLayout';
-import SectionHeading from '@/components/SectionHeading';
 import SmartLink from '@/components/SmartLink';
+import PageHeading from '@/components/PageHeading';
 import styles from './aboutpage.module.css';
 
 export const metadata = {
@@ -11,7 +11,7 @@ function AboutPage() {
   return (
     <PageLayout>
       <section>
-        <SectionHeading>About Me</SectionHeading>
+        <PageHeading>About Me</PageHeading>
         <div className={styles.content}>
           <p>
             I am an aspiring web developer focused on building web
@@ -30,10 +30,10 @@ function AboutPage() {
             something bigger.
           </p>
           <p>
-            The path hasn&apos;t been easy. The web moves fast, and
-            it&apos;s easy to feel stuck or behind. But I&apos;m still
-            here, still learning, and still trying to get better
-            project by project.
+            The path hasn&apos;t been easy. Web development moves
+            fast, and it&apos;s easy to feel stuck or behind. But
+            I&apos;m still here, still learning, and still trying to
+            get better project by project.
           </p>
           <p>
             You can see what I&apos;ve been working on in the{' '}
