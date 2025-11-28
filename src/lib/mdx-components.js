@@ -4,6 +4,7 @@ import ExpandableSection from '@/components/ExpandableSection';
 import Figure from '@/components/Figure';
 import SectionHeading from '@/components/SectionHeading';
 import SmartLink from '@/components/SmartLink';
+import Spacer from '@/components/Spacer';
 import Image from 'next/image';
 
 export const COMPONENT_MAP = {
@@ -23,4 +24,5 @@ export const COMPONENT_MAP = {
   a: SmartLink,
   ExpandableSection,
   h2: SectionHeading,
+  Spacer,
 };
