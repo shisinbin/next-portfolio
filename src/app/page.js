@@ -16,8 +16,7 @@ export default async function HomePage() {
       <PageLayout>
         <section className={styles.hero}>
           <h1 className={styles.title}>
-            Hey, I&apos;m{' '}
-            <span className={styles.accent}>shisinbin</span>.
+            Hey, I'm <span className={styles.accent}>shisinbin</span>.
           </h1>
           <p className={styles.subtitle}>
             Building things on the web. Solving problems. Chasing that

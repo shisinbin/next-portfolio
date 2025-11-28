@@ -6,7 +6,7 @@ import { ChevronRight } from 'react-feather';
 import styles from './ExpandableSection.module.css';
 
 function ExpandableSection({
-  title = 'Extra info',
+  title = 'More info',
   children,
   defaultOpen = false,
 }) {

@@ -12,7 +12,10 @@ function BlogPage() {
       <section>
         <PageHeading>Blog</PageHeading>
         <p className={styles.intro}>
-          A quiet room for now. Words arriving shortly.
+          I'm not the best writer, clearly, but maybe I might have
+          something to say in future, whether it be on web
+          development, my past experience, or something else entirely.
+          So let's leave this open for now and we'll see what happens.
         </p>
       </section>
     </PageLayout>

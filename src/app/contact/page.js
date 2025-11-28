@@ -15,8 +15,8 @@ function ContactPage() {
         <PageHeading>Contact Page</PageHeading>
         <div className={styles.content}>
           <p className={styles.intro}>
-            Whether you&apos;d like to discuss a project, collaborate,
-            or just say hello, feel free to drop me a message.
+            Whether you'd like to discuss a project, collaborate, or
+            just say hello, feel free to drop me a message.
           </p>
 
           <ContactForm />

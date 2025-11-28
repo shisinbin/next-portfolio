@@ -1,6 +1,7 @@
 /*
-  Josh's Custom CSS Reset
-  https://www.joshwcomeau.com/css/custom-css-reset/
+  =========================================================================
+  RESET (https://www.joshwcomeau.com/css/custom-css-reset/)
+  =========================================================================
 */
 
 *,
@@ -67,22 +68,37 @@ h6 {
   isolation: isolate;
 }
 
-/* THEME VARIABLES */
+/*
+  =========================================================================
+  TOKENS: SPACING, LAYOUT, COLOR, SHADOWS
+  =========================================================================
+*/
+
 html {
   /* Spacing */
-  --space-2xs: 0.25rem;
+  /* Original spacing system */
+  /* --space-2xs: 0.25rem;
   --space-xs: 0.5rem;
   --space-sm: 1rem;
   --space-md: 2rem;
   --space-lg: 4rem;
-  --space-xl: 6rem;
+  --space-xl: 6rem; */
+  /* Potential alternative */
+  /* --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 1rem;
+  --space-4: 1.5rem;
+  --space-5: 2rem;
+  --space-6: 3rem;
+  --space-7: 4rem; */
 
+  /* Layout */
+  --viewport-padding: 16px;
   --content-width: 1024px; /* 64rem */
   --outer-content-width: 1280px; /* 80rem */
   --trimmed-content-width: calc(
     var(--content-width) - (var(--viewport-padding) * 2)
   );
-  --viewport-padding: 16px;
   --header-height: 64px;
 
   /* Breakpoints - for reference only */
@@ -103,19 +119,24 @@ html {
   --gray-100: hsl(var(--hue-gray) 20% 95%);
   --gray-200: hsl(var(--hue-gray) 15% 85%);
   --gray-300: hsl(var(--hue-gray) 12% 70%);
+  --gray-400: hsl(var(--hue-gray) 12% 60%);
   --gray-500: hsl(var(--hue-gray) 10% 50%);
-  --gray-700: hsl(var(--hue-gray) 10% 35%);
+  --gray-600: hsl(var(--hue-gray) 10% 40%);
+  --gray-700: hsl(var(--hue-gray) 10% 32%);
   --gray-900: hsl(var(--hue-gray) 15% 15%);
 
-  /* Accent */
+  /* Accent blues*/
   --accent-50: hsl(var(--hue-accent) 50% 90%);
+  --accent-100: hsl(var(--hue-accent) 55% 88%);
+  --accent-200: hsl(var(--hue-accent) 70% 78%);
   --accent-400: hsl(var(--hue-accent) 90% 45%);
   --accent-500: hsl(var(--hue-accent) 95% 40%);
   --accent-600: hsl(var(--hue-accent) 100% 35%);
+  --accent-700: hsl(var(--hue-accent) 100% 28%);
 
   /* Surfaces */
   --color-bg: var(--gray-100);
-  --color-bg-muted: var(--gray-100);
+  --color-bg-muted: var(--gray-50);
   --color-surface: var(--gray-50);
   --color-border: var(--gray-200);
   --color-card-border: hsl(var(--hue-gray) 12% 70% / 0.3);
@@ -123,10 +144,10 @@ html {
 
   /* Text */
   --color-text: var(--gray-900);
-  --color-text-muted: var(--gray-700);
+  --color-text-muted: var(--gray-600);
   --color-text-inverse: white;
 
-  /* Shadows / Elevations */
+  /* Shadows */
   --shadow-color: 229deg 5% 50%;
 
   --shadow-elevation-low: 0.3px 0.5px 0.5px
@@ -149,31 +170,114 @@ html {
     25px 50px 48.2px -4.2px hsl(var(--shadow-color) / 0.16);
 }
 
-/* TYPOGRAPHY */
+/*
+  =========================================================================
+  TYPOGRAPHY
+  =========================================================================
+*/
+
+html {
+  font-family: var(--font-family), system-ui, sans-serif;
+}
+
+code {
+  font-family: var(--font-family-mono), monospace;
+}
+
 h1 {
   font-size: clamp(2rem, 5vw, 2.5rem);
   line-height: 1.1;
   font-weight: 700;
 }
+
 h2 {
   font-size: clamp(1.5rem, 4vw, 1.75rem);
   line-height: 1.2;
   font-weight: 600;
 }
+
 h3 {
   font-size: clamp(1.25rem, 4vw, 1.5rem);
   line-height: 1.3;
   font-weight: 500;
 }
 
-/* CUSTOM STYLES */
+p {
+  font-size: 1.125rem;
+}
+
+/*
+  =========================================================================
+  GLOBAL ELEMENT STYLES
+  =========================================================================
+*/
+
+html {
+  /*
+    Reserves space for the scrollbar, regardless if there is one.
+    Helps avoid layout shifts
+  */
+  scrollbar-gutter: stable;
+}
+
 body {
   min-height: 100vh;
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
   color: var(--color-text);
-  /* background-image: linear-gradient(
+  background: radial-gradient(
+    circle at 50% 30%,
+    hsl(220deg 20% 98%) 0%,
+    hsl(220deg 20% 94%) 80%
+  );
+}
+
+body > main {
+  flex: 1;
+}
+
+/*
+  =========================================================================
+  RESPONSIVE STYLES
+  =========================================================================
+*/
+
+@media (min-width: 544px) {
+  html {
+    --viewport-padding: 24px;
+  }
+}
+
+/* @media (min-width: 768px) {
+  html {
+    --viewport-padding: 48px;
+  }
+} */
+
+/*
+  =========================================================================
+  REDUCED MOTION
+  =========================================================================
+*/
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/*
+  =========================================================================
+  EXPERIMENTS
+  =========================================================================
+*/
+
+/* background-image: linear-gradient(
     45deg,
     hsl(228deg 20% 95%) 0%,
     hsl(221deg 23% 94%) 18%,
@@ -189,35 +293,35 @@ body {
     hsl(221deg 23% 94%) 82%,
     hsl(228deg 20% 95%) 100%
   ); */
-  /* background: linear-gradient(
+
+/* background: linear-gradient(
     to bottom,
     hsl(220deg 20% 96%),
     hsl(220deg 20% 94%)
   ); */
-  /* background: linear-gradient(
+
+/* background: linear-gradient(
     to right,
     hsl(220deg 20% 95%),
     hsl(220deg 20% 97%)
   ); */
-  background: radial-gradient(
-    circle at 50% 30%,
-    hsl(220deg 20% 98%) 0%,
-    hsl(220deg 20% 94%) 80%
-  );
-  /* background: radial-gradient(
+
+/* background: radial-gradient(
     circle at 80% 10%,
     hsl(220 20% 97%) 0%,
     hsl(220 20% 92%) 70%
-  );
-  background: linear-gradient(hsl(220 20% 95%), hsl(220 20% 95%)),
+  ); */
+
+/* background: linear-gradient(hsl(220 20% 95%), hsl(220 20% 95%)),
     repeating-linear-gradient(
       45deg,
       #0001 0,
       #0001 1px,
       transparent 1px,
       transparent 2px
-    );
-  background: radial-gradient(
+    ); */
+
+/* background: radial-gradient(
       circle at 30% 20%,
       hsl(200 20% 98%) 0%,
       transparent 60%
@@ -228,37 +332,5 @@ body {
       transparent 70%
     ),
     hsl(220 20% 95%); */
-  /* background: var(--color-bg); */
-}
 
-body > main {
-  flex: 1;
-}
-
-html {
-  font-family: var(--font-family), system-ui, sans-serif;
-  /*
-    Reserves space for the scrollbar, regardless if there is one.
-    Helps avoid layout shifts
-  */
-  scrollbar-gutter: stable;
-}
-code {
-  font-family: var(--font-family-mono);
-}
-
-p {
-  font-size: 1.125rem;
-}
-
-@media (min-width: 544px) {
-  html {
-    --viewport-padding: 24px;
-  }
-}
-
-/* @media (min-width: 768px) {
-  html {
-    --viewport-padding: 48px;
-  }
-} */
+/* background: var(--color-bg); */
