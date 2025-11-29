@@ -63,6 +63,10 @@
 .content > *:first-child {
   margin-top: 0;
 }
+.content > *:last-child {
+  margin-bottom: 0;
+}
+
 .content {
   border-top: 1px solid var(--gray-200);
   padding-block: 2rem;
