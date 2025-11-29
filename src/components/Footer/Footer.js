@@ -36,7 +36,7 @@ function Footer() {
           >
             <Linkedin size={20} />
           </a>
-          <a href='mailto:hello@example.com' aria-label='Email'>
+          <a href='mailto:shisinbin@gmail.com' aria-label='Email'>
             <Mail size={20} />
           </a>
         </div>
