@@ -1,0 +1,20 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.count {
+}
+
+.mainGridArea {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--viewport-padding);
+}
+
+@media (width > calc(768 / 16 * 1rem)) {
+  .mainGridArea {
+    grid-template-columns: 1fr 1fr;
+  }
+}

@@ -17,7 +17,10 @@ function PageHeading({
 
   return (
     <div className={styles.wrapper}>
-      <h1 className={styles.headingWithSubtitle} {...delegated}>
+      <h1
+        className={clsx(styles.headingWithSubtitle, className)}
+        {...delegated}
+      >
         {children}
       </h1>
       <span className={styles.subtitle}>{subtitle}</span>

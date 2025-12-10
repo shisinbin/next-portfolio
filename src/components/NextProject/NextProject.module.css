@@ -96,7 +96,7 @@
   font-size: 1rem;
 }
 
-@media (min-width: 544px) {
+@media (width >= calc(544 / 16 * 1rem)) {
   .imageWrapper {
     display: revert;
   }

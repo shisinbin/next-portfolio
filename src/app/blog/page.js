@@ -4,6 +4,7 @@ import styles from './blogpage.module.css';
 import { getAllBlogPosts } from '@/lib/blog';
 import BlogSummaryCard from '@/components/BlogSummaryCard';
 import Link from 'next/link';
+import { CATEGORIES } from '@/constants';
 
 export const metadata = {
   title: 'Blog',
@@ -14,7 +15,7 @@ async function BlogPage() {
 
   return (
     <PageLayout>
-      <PageHeading>Blog</PageHeading>
+      <h1 className={styles.visuallyHidden}>shisinbin's Blog</h1>
 
       <div className={styles.mainGrid}>
         {/* Newest posts */}
@@ -43,7 +44,16 @@ async function BlogPage() {
           </h2>
 
           <div className={styles.tagsContainer}>
-            <Link href='#' className={styles.tagLink}>
+            {CATEGORIES.map(({ value, label }) => (
+              <Link
+                href={`/blog/categories/${value}`}
+                key={value}
+                className={styles.tagLink}
+              >
+                {label}
+              </Link>
+            ))}
+            {/* <Link href='#' className={styles.tagLink}>
               CSS
             </Link>
             <Link href='#' className={styles.tagLink}>
@@ -54,7 +64,7 @@ async function BlogPage() {
             </Link>
             <Link href='#' className={styles.tagLink}>
               General
-            </Link>
+            </Link> */}
           </div>
         </nav>
 

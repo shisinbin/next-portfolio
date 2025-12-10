@@ -20,7 +20,7 @@
   padding: 0px !important;
 }
 
-@media (min-width: 1024px) {
+@media (width >= calc(1024 / 16 * 1rem)) {
   .wrapper {
     border-radius: 8px !important;
   }

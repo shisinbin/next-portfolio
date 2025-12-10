@@ -1,3 +1,16 @@
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  border: 0;
+  padding: 0;
+  white-space: nowrap;
+  clip-path: inset(100%);
+  clip: rect(0 0 0 0);
+  overflow: hidden;
+}
+
 /* .intro {
   max-width: 55ch;
   margin-block-end: 1em;
@@ -5,22 +18,24 @@
 
 .mainGrid {
   display: grid;
-  grid-template-columns: 2fr 1fr;
-  grid-template-rows: auto 1fr;
+  grid-template-columns: 1fr;
+  grid-template-rows: 0 auto;
   grid-template-areas:
-    'newest categories'
-    'newest featured';
+    'blocker'
+    'newest'
+    'categories'
+    'featured';
   gap: 64px 96px;
   padding-top: 32px;
   padding-bottom: 96px;
 
-  @media (width < calc(768 / 16 * 1rem)) {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto;
+  @media (width >= calc(768 / 16 * 1rem)) {
+    grid-template-columns: 2fr 1fr;
+    grid-template-rows: 0 auto 1fr;
     grid-template-areas:
-      'newest'
-      'categories'
-      'featured';
+      'blocker blocker'
+      'newest categories'
+      'newest featured';
   }
 }
 
@@ -34,6 +49,7 @@
 
 .newest {
   grid-area: newest;
+  margin-top: -64px;
 }
 
 .newestContainer {

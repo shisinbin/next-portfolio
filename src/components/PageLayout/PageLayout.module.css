@@ -29,12 +29,12 @@
   }
 } */
 
-@media (min-width: 544px) {
+@media (width >= calc(544 / 16 * 1rem)) {
   .layout {
     padding-top: calc(var(--header-height) + 48px);
   }
 }
-@media (min-width: 768px) {
+@media (width >= calc(768 / 16 * 1rem)) {
   .layout {
     padding-top: calc(var(--header-height) + 64px);
   }

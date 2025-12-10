@@ -39,3 +39,16 @@ export const getBlogPostBySlug = React.cache(async (slug) => {
   const { data: frontmatter, content } = matter(rawContent);
   return { frontmatter, content };
 });
+
+export async function getBlogPostsByCategory(category) {
+  const normalisedCategory = category.toLowerCase();
+  const allPosts = await getAllBlogPosts();
+
+  return allPosts.filter((post) => {
+    const normalisedCategories = post.categories.map((c) =>
+      c.toLowerCase()
+    );
+
+    return normalisedCategories.includes(normalisedCategory);
+  });
+}

@@ -73,7 +73,7 @@
   padding-inline: var(--viewport-padding);
 }
 
-@media (min-width: 1024px) {
+@media (width >= calc(1024 / 16 * 1rem)) {
   .wrapper {
     border-radius: 8px;
   }
@@ -83,7 +83,7 @@
   When there is 100px worth of space outside content (1024px),
   then use that for more buffer.
 */
-@media (min-width: 1124px) {
+@media (width >= calc(1124 / 16 * 1rem)) {
   .wrapper {
     /*
     Used Fluid Calculator to approximate best values -

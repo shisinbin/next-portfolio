@@ -47,9 +47,9 @@ async function ProjectPage({ params }) {
         </nav>
         <PageHeading
           subtitle={
-            <p>
+            <>
               Last updated on <time>{humanisedDate}</time>
-            </p>
+            </>
           }
         >
           {frontmatter.title}

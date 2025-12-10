@@ -243,7 +243,7 @@ body > main {
   =========================================================================
 */
 
-@media (min-width: 544px) {
+@media (width >= calc(544 / 16 * 1rem)) {
   html {
     --viewport-padding: 24px;
   }
