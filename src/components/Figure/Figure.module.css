@@ -1,24 +1,31 @@
 .figure {
-  margin: 2rem auto;
-  text-align: center;
-  width: fit-content;
-  max-width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  display: grid;
+  justify-items: center;
+  gap: 1rem;
 }
 
-.image {
-  display: block;
-  width: 100%;
-  height: auto;
-  /* object-fit: contain; */
+.media {
   border-radius: 8px;
-  max-width: 80ch;
+  width: min(100%, var(--media-max-width, 60ch));
+  object-fit: contain;
+  height: auto;
 }
 
 .caption {
-  margin-top: 1rem;
-  font-size: 0.9rem;
+  max-width: var(--media-max-width, 60ch);
+  width: fit-content;
+  font-size: 1rem;
   color: var(--color-text-muted);
+  text-wrap: balance;
 }
+
+/* .imageWrapper {
+  position: relative;
+  width: 100%;
+  height: 500px;
+  background: transparent;
+}
+
+.image {
+  object-fit: contain;
+} */

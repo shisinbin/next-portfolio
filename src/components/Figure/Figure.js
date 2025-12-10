@@ -1,22 +1,49 @@
+// import Image from 'next/image';
 import styles from './Figure.module.css';
 
-const SIZE_MAP = {
-  xs: { maxWidth: '20ch' },
-  small: { maxWidth: '40ch' },
-  medium: { maxWidth: '60ch' },
-  large: { maxWidth: '80ch' },
+const MAX_WIDTHS = {
+  xs: '20ch',
+  small: '40ch',
+  medium: '60ch',
+  large: '80ch',
+  full: '100%',
 };
 
 function Figure({ src, alt, caption, size = 'medium' }) {
-  const maxWidth = SIZE_MAP[size];
+  const maxWidth = MAX_WIDTHS[size] || '60ch';
+  const isVideo = src.endsWith('.mp4');
+
   return (
     <figure className={styles.figure}>
-      <img
-        src={src}
-        alt={alt}
-        className={styles.image}
-        style={maxWidth}
-      />
+      {/* <div className={styles.imageWrapper}>
+        <Image src={src} alt={alt} fill className={styles.image} />
+      </div> */}
+      {isVideo ? (
+        <video
+          preload='metadata'
+          src={src}
+          autoPlay
+          loop
+          muted
+          playsInline
+          className={styles.media}
+          style={{
+            '--media-max-width': maxWidth,
+          }}
+          role='img'
+          aria-label={alt}
+        />
+      ) : (
+        <img
+          src={src}
+          alt={alt}
+          loading='lazy'
+          className={styles.media}
+          style={{
+            '--media-max-width': maxWidth,
+          }}
+        />
+      )}
       {caption && (
         <figcaption className={styles.caption}>{caption}</figcaption>
       )}
