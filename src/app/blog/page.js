@@ -53,18 +53,6 @@ async function BlogPage() {
                 {label}
               </Link>
             ))}
-            {/* <Link href='#' className={styles.tagLink}>
-              CSS
-            </Link>
-            <Link href='#' className={styles.tagLink}>
-              React
-            </Link>
-            <Link href='#' className={styles.tagLink}>
-              Next.js
-            </Link>
-            <Link href='#' className={styles.tagLink}>
-              General
-            </Link> */}
           </div>
         </nav>
 

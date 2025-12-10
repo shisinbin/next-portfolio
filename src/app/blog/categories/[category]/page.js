@@ -3,34 +3,56 @@ import styles from './blogcategoriespage.module.css';
 import PageLayout from '@/components/PageLayout';
 import PageHeading from '@/components/PageHeading';
 import BlogSummaryCard from '@/components/BlogSummaryCard';
-import { CATEGORIES } from '@/constants';
+import { CATEGORY_MAP } from '@/constants';
 import { notFound } from 'next/navigation';
+import SmartLink from '@/components/SmartLink';
 
 export async function generateMetadata({ params }) {
   const { category } = await params;
-  return { title: `${category} / Blog` };
+
+  const categoryValue =
+    typeof category === 'string' ? category.toLowerCase() : '';
+  const cat = CATEGORY_MAP[categoryValue];
+  if (!cat) {
+    notFound();
+  }
+
+  return { title: `${cat.label} // Blog` };
 }
 
 async function BlogCategoriesPage({ params }) {
   const { category } = await params;
 
-  const label = CATEGORIES.find(
-    (c) => c.value === category.toLowerCase()
-  )?.label;
-  if (!label) {
+  const categoryValue =
+    typeof category === 'string' ? category.toLowerCase() : '';
+  const cat = CATEGORY_MAP[categoryValue];
+  if (!cat) {
     notFound();
   }
 
   const posts = await getBlogPostsByCategory(category);
+  const postsLength = posts.length;
 
-  const countText = `${posts.length} post${
+  const countText = `${postsLength} post${
     posts.length !== 1 ? 's' : ''
   }`;
+
+  if (postsLength === 0) {
+    return (
+      <PageLayout>
+        <p>
+          There are no posts for this category yet.
+          <br />
+          <SmartLink href='/blog'>Back to blog</SmartLink>
+        </p>
+      </PageLayout>
+    );
+  }
 
   return (
     <PageLayout>
       <header className={styles.header}>
-        <PageHeading>{label}</PageHeading>
+        <PageHeading>{cat.label}</PageHeading>
         <span className={styles.count}>{countText}</span>
       </header>
       <div className={styles.mainGridArea}>
