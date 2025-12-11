@@ -35,7 +35,7 @@ async function BlogPostPage({ params }) {
 
   return (
     <PageLayout>
-      <div className={styles.readingWidth}>
+      <div className={styles.narrowContainer}>
         <nav className={styles.metaNav}>
           <SmartLink href='/blog' className={styles.backLink}>
             <ArrowLeft />

@@ -3,7 +3,11 @@ import styles from './CodeSnippet.module.css';
 
 function CodeSnippet(props) {
   return (
-    <Code {...props} theme='monokai' className={styles.wrapper} />
+    <Code
+      {...props}
+      theme='dracula-soft'
+      className={styles.wrapper}
+    />
   );
 }
 

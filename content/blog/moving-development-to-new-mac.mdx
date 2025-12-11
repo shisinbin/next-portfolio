@@ -1,0 +1,117 @@
+---
+title: 'How I Set Up My New Mac for Django Development'
+date: '2025-12-10'
+description: |
+  Moving development of an existing Django app from one computer to another can be a stressful experience, especially if you're not used to the various things that go on behind the scenes. In this blog post, I'll describe how I set up a new Mac to maintain an existing Django app.
+categories: ['general']
+tags:
+  [
+    'Django',
+    'Digital Ocean',
+    'SSH keys',
+    'Development',
+    'macOS',
+    'PostgreSQL',
+  ]
+readingTime: 10
+published: true
+---
+
+I built a [Django](https://www.djangoproject.com/) web app several years (when I knew little about web development) and I've long held an idea to refactor its markup and styles to make it more modern, maintainable and reasonable.
+
+The Django app web is constantly running inside a [Digital Ocean](https://www.digitalocean.com/) droplet (basically a virtual machine that acts as a production server), and I am able to login to the droplet, either from my local computer or on their site's recovery console, get into the production project folder, run the virtual environment, and then do various things.
+
+I recently bought a new Mac computer, and so I thought it would be a good time to try and move development of the web app from an older computer to this new one, and in this blog post I'll try to outline what I did and why.
+
+## Replicating the production environment
+
+With most web apps, the development flows from your local computer to your GitHub repo and then to your production environment. So, when you replace that local computer, you want to basically look towards your production environment and try to replicate it as much as possible.
+
+So, the first thing I did was to go inside the droplet. I login to the droplet (either on my old computer in the terminal or in the recovery console), run the virtual environment, and then establish two key things - the **Python version** running, and the **packages installed**.
+
+```
+$ ssh <myusername>@<MY_DROPLET_IP_ADDRESS>
+
+$ source ./venv/bin/activate
+
+(venv) $ python --version
+Python 3.8.10 // output
+
+(venv) $ pip freeze
+asgiref==3.5.2
+backports.zoneinfo==0.2.1
+certifi==2024.2.2
+charset-normalizer==3.3.2
+Django==3.2
+...
+```
+
+You can either copy this list of files and paste it into a file that's usually called `requirements.txt`, or even do this in the terminal with `pip freeze > requirements.txt`, which will create a text file for you.
+
+### `pyenv`
+
+[`pyenv`](https://github.com/pyenv/pyenv) is simple tool that helps you choose what version of Python is used in a particular folder, which is exactly what we need in trying to replicate the droplet environment. After installing it, make sure to [set up your shell environment accordingly](https://github.com/pyenv/pyenv?tab=readme-ov-file#b-set-up-your-shell-environment-for-pyenv) (I use zsh as my shell, which is reflected in the commands I used below, but if you use bash or something else then you'll need to adjust accordingly)
+
+Install pyenv via Homebrew:
+
+```
+brew install pyenv
+```
+
+If you have a zsh shell, add some lines to your `~/.zshrc` file:
+
+```
+echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.zshrc
+echo '[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.zshrc
+echo 'eval "$(pyenv init - zsh)"' >> ~/.zshrc
+```
+
+Reload the terminal or source the file:
+
+```
+source ~/.zshrc
+```
+
+Install the droplet Python version:
+
+```
+pyenv install 3.8.10
+```
+
+You can check what versions you have available with `pyenv versions`.
+
+## Cloning the Django Project and Creating the Virtual Environment
+
+Clone the repo from Github and then go into your project folder:
+
+```
+git clone git@github.com:<your-username>/<repo>.git
+cd <repo>
+```
+
+Inside the project root, set pyenv local Python version:
+
+```
+pyenv local 3.8.10
+```
+
+Create and then run the local environment:
+
+```
+python -m venv venv
+source ./venv/bin/activate
+```
+
+Now if you check which version of python you have it should correspond with the version you've set for this project folder:
+
+```
+python --version // output: Python 3.8.10
+```
+
+Use that list of packages installed in the production server (requirements.txt), place it in your project root, and then run:
+
+```
+pip install -r requirements.txt
+```
+
+At this point we now have a virtual environment that matches the production server.

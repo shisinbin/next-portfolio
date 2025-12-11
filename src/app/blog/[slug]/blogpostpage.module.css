@@ -1,5 +1,6 @@
-.readingWidth {
-  max-width: 72ch;
+.narrowContainer {
+  width: min(100%, 72ch);
+  margin-inline: auto;
 }
 
 .metaNav {

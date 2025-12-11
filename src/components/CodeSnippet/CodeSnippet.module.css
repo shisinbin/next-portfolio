@@ -3,7 +3,9 @@
   margin-bottom: 2rem !important;
   /* border: 1px solid transparent; */
   overflow: hidden;
-  border-radius: 0px !important;
+
+  /* Temporary!! */
+  border-radius: 8px !important;
 }
 .wrapper pre {
   padding: var(--viewport-padding) !important;
@@ -20,8 +22,9 @@
   padding: 0px !important;
 }
 
-@media (width >= calc(1024 / 16 * 1rem)) {
+/* Commenting this out because of blog layout. Need to rethink */
+/* @media (width >= calc(1024 / 16 * 1rem)) {
   .wrapper {
     border-radius: 8px !important;
   }
-}
+} */
