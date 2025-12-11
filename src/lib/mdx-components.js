@@ -5,10 +5,23 @@ import Figure from '@/components/Figure';
 import SectionHeading from '@/components/SectionHeading';
 import SmartLink from '@/components/SmartLink';
 import Spacer from '@/components/Spacer';
-import Image from 'next/image';
+
+const basicPreStyles = {
+  marginBottom: '2rem',
+  backgroundColor: 'palegoldenrod',
+  borderRadius: '8px',
+  padding: '16px',
+  overflowX: 'auto',
+  overflowWrap: 'anywhere',
+  whiteSpace: 'pre-wrap',
+  color: 'var(--gray-100, white)',
+  background: 'hsl(200deg, 13%, 22%)',
+  fontSize: 'clamp(0.875rem, 1.5vw + 0.5rem, 1.125rem)',
+};
 
 export const COMPONENT_MAP = {
   pre: CodeSnippet,
+  // pre: (props) => <pre style={basicPreStyles} {...props} />,
   // h2: (props) => (
   //   <h2
   //     style={{
@@ -19,7 +32,6 @@ export const COMPONENT_MAP = {
   //   />
   // ),
   Callout,
-  Image,
   Figure,
   a: SmartLink,
   ExpandableSection,

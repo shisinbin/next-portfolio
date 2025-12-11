@@ -13,24 +13,35 @@ tags:
     'macOS',
     'PostgreSQL',
   ]
-readingTime: 10
+readingTime: 7
 published: true
 ---
 
-I built a [Django](https://www.djangoproject.com/) web app several years (when I knew little about web development) and I've long held an idea to refactor its markup and styles to make it more modern, maintainable and reasonable.
+<Figure
+  src='/images/blog/coder_struggling.jpg'
+  alt='Programmer sitting infront of their laptop, looking stressed'
+  size='full'
+/>
 
-The Django app web is constantly running inside a [Digital Ocean](https://www.digitalocean.com/) droplet (basically a virtual machine that acts as a production server), and I am able to login to the droplet, either from my local computer or on their site's recovery console, get into the production project folder, run the virtual environment, and then do various things.
+## Background
+
+The quick version: I wanted to move local development for an existing Django web app from one computer to another Mac computer - this is how I did it.
+
+The long version: I built a [Django](https://www.djangoproject.com/) web app several years (when I knew little about web development) and I've long held an idea to refactor its markup and styles to make it more modern, maintainable and reasonable.
+
+The Django app web is constantly running inside a [Digital Ocean](https://www.digitalocean.com/) droplet (basically a virtual machine that acts as a production server), and I am able to log into the droplet, either from my local computer or on their site's recovery console, get into the production project folder, run the virtual environment, and then do various things.
 
 I recently bought a new Mac computer, and so I thought it would be a good time to try and move development of the web app from an older computer to this new one, and in this blog post I'll try to outline what I did and why.
 
 ## Replicating the production environment
 
-With most web apps, the development flows from your local computer to your GitHub repo and then to your production environment. So, when you replace that local computer, you want to basically look towards your production environment and try to replicate it as much as possible.
+With most web apps, the development flows from the local computer -> GitHub repo -> production environment.
+So, when you replace that local computer, you want to look towards your production environment and try to replicate it as much as possible.
 
-So, the first thing I did was to go inside the droplet. I login to the droplet (either on my old computer in the terminal or in the recovery console), run the virtual environment, and then establish two key things - the **Python version** running, and the **packages installed**.
+I logged into the droplet (in the terminal on my old computer), ran the virtual environment, and then tried to establish two key things - the **Python version** running, and the **packages installed**.
 
-```
-$ ssh <myusername>@<MY_DROPLET_IP_ADDRESS>
+```shell
+$ ssh <admin_server_username>@<MY_DROPLET_IP_ADDRESS>
 
 $ source ./venv/bin/activate
 
@@ -46,72 +57,226 @@ Django==3.2
 ...
 ```
 
-You can either copy this list of files and paste it into a file that's usually called `requirements.txt`, or even do this in the terminal with `pip freeze > requirements.txt`, which will create a text file for you.
+I copied this list exactly and put it into a text file (running `pip freeze > requirements.txt` also does this for you automatically, but it gets stored in your production server). I would need it later when installing packages in my local environment.
 
 ### `pyenv`
 
-[`pyenv`](https://github.com/pyenv/pyenv) is simple tool that helps you choose what version of Python is used in a particular folder, which is exactly what we need in trying to replicate the droplet environment. After installing it, make sure to [set up your shell environment accordingly](https://github.com/pyenv/pyenv?tab=readme-ov-file#b-set-up-your-shell-environment-for-pyenv) (I use zsh as my shell, which is reflected in the commands I used below, but if you use bash or something else then you'll need to adjust accordingly)
+[`pyenv`](https://github.com/pyenv/pyenv) is simple tool that helps you choose what version of Python is used in a particular folder, which is exactly what I needed here. After installing it you have to update your _shell configuration file_, which is a script that runs every time you open a new session in the terminal. I use zsh, so I needed to follow the instructions [here](https://github.com/pyenv/pyenv?tab=readme-ov-file#b-set-up-your-shell-environment-for-pyenv).
 
-Install pyenv via Homebrew:
+Here's a flow of what I did:
 
-```
+Installed pyenv via Homebrew:
+
+```shell
 brew install pyenv
 ```
 
-If you have a zsh shell, add some lines to your `~/.zshrc` file:
+I added some lines to my `~/.zshrc` file:
 
-```
+```shell
 echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.zshrc
 echo '[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.zshrc
 echo 'eval "$(pyenv init - zsh)"' >> ~/.zshrc
 ```
 
-Reload the terminal or source the file:
+I needed to reload the terminal or source the file to enact the config changes:
 
-```
+```shell
 source ~/.zshrc
 ```
 
-Install the droplet Python version:
+Then installed the Python version corresponding to droplet version:
 
-```
+```shell
 pyenv install 3.8.10
 ```
 
-You can check what versions you have available with `pyenv versions`.
+(You can check what versions you have available with `pyenv versions`)
 
 ## Cloning the Django Project and Creating the Virtual Environment
 
-Clone the repo from Github and then go into your project folder:
+The next stage was to clone the repo in my dev folder and then made sure to _open the project root folder_:
 
-```
-git clone git@github.com:<your-username>/<repo>.git
+```shell
+git clone git@github.com:<my-github-username>/<repo>.git
 cd <repo>
 ```
 
-Inside the project root, set pyenv local Python version:
+Inside the project root, I then set the local Python version:
 
-```
+```shell
 pyenv local 3.8.10
 ```
 
-Create and then run the local environment:
+Next I created a virtual environment and activated it:
 
-```
+```shell
 python -m venv venv
 source ./venv/bin/activate
 ```
 
-Now if you check which version of python you have it should correspond with the version you've set for this project folder:
+Inside this newly created environment, I can check to make sure which version of python is running inside of it:
 
-```
-python --version // output: Python 3.8.10
+```shell
+python --version # output: Python 3.8.10
 ```
 
-Use that list of packages installed in the production server (requirements.txt), place it in your project root, and then run:
+I used that file I created earlier of packages installed in the production environment, placed it in the project root, and ran a command that uses it to install packages in this new environment:
 
-```
+```shell
 pip install -r requirements.txt
 ```
 
 At this point we now have a virtual environment that matches the production server.
+
+## Creating the local database
+
+My Django app uses PostgreSQL. Previously, I needed to download Postgres.app and pgAdmin4 before configuring things. But now it's pretty straightforward to get things set up from the terminal.
+
+I installed PostgreSQL and then started a local database server
+
+```shell
+brew install postgresql
+brew services start postgresql # run brew services stop postgresql to stop it
+```
+
+I then tried to create a superuser:
+
+```shell
+createuser -s $(whoami)
+```
+
+`whoami` is the token name for your macOS username. This caused an error because I think it automatically creates a superuser using my macOS username, so I don't need to create a new one? Anyway, next I need to create a local DB:
+
+```shell
+createdb my_local_db # name this whatever makes sense
+```
+
+### Useful database stuff
+
+To see a list of databases:
+
+```shell
+psql -l # press 'q' to exit
+```
+
+To connect to your db and open up a PostgreSQL shell:
+
+```shell
+psql my_local_db
+```
+
+And some useful commands to use when you're inside the shell (after the db is set-up):
+
+```shell
+\dt # lists all tables
+\dn # lists all schemas
+\conninfo # check the connection
+\d books_book # this example describes the "books" table
+\l # lists databases
+\q # exit psql
+```
+
+### Configuring Django app settings
+
+In a Django project, there's an important configuration file called `settings.py`, where amongst other things we set up the connection to the db. At the end of this file in my project, I have this bit of code:
+
+```python
+try:
+    from .local_settings import *
+except ImportError:
+    pass
+
+```
+
+What this does is allow us a way to keep certain things secret (`local_settings.py` is added to the same folder that has `settings.py`, and it is added to my `.gitignore` file to make sure it doesn't get pushed to GitHub). So, I created this file and then added the database stuff to it:
+
+```python
+DEBUG = True
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'my_local_db',
+        'USER': 'my_macos_username',
+        'PASSWORD': '',
+        'HOST': 'localhost',
+        'PORT': '',
+    }
+}
+
+SECRET_KEY = 'dev-secret-key' # doesn't matter what this is
+```
+
+No password is needed because I guess it's wired with macOS peer authentication.
+
+### Run the Django app locally
+
+With the virtual environment running and in my project root, I then applied migrations (this sets up the tables in the database):
+
+```shell
+python manage.py migrate
+```
+
+Before running the development server:
+
+```shell
+python manage.py runserver
+```
+
+Visiting `http://127.0.0.1:8000/`, I could view the app, where it's running exactly like production.
+
+## Setting up SSH keys
+
+The only thing left to do is set up SSH keys so that I can log into the droplet on my new computer. SSH is a protocol that allows you to log into and manage a remote computer or server using a command-line interface. We can generate SSH keys on any computer and then share our public keys to enable this protocol. The droplet already has the public SSH key for my old computer, and I needed to add a public SSH key for my new one to it.
+
+I navigated these (slightly outdated) Digital Ocean guides to help:
+
+- [Generating Keys With OpenSSH](https://www.digitalocean.com/community/tutorials/how-to-create-ssh-keys-with-openssh-on-macos-or-linux#step-3-generating-keys-with-openssh)
+- [How to add SSH keys to existing droplet](https://docs.digitalocean.com/products/droplets/how-to/add-ssh-keys/to-existing-droplet/#manually)
+
+So, first of all I use the `ssh-keygen` command-line tool to create a matched pair of cryptographic keys (a **public key** and a **private key**) on my Mac:
+
+```shell
+ssh-keygen
+```
+
+This created two files in my `~/.ssh folder`:
+
+```shell
+id_ed25519 # private key - never share!
+id.ed25519.pub # public key
+```
+
+I went into the `.pub` file and copied its entire contents, which looks something like this:
+
+```
+ssh-ed25519 BLAHBLAHBLAHBLAHBLAH <my_macos_username>@Mac
+```
+
+Then I logged into the droplet on my old computer, and opened the `authorized_keys` file:
+
+```shell
+$ nano ~/.ssh/authorized_keys
+```
+
+I pasted the copied SSH key at the end of the file, saved and exited. After that, I needed to "set the permissions and ownership of the files" (I don't really understand what this means, but it's in the Digital Ocean guide):
+
+```shell
+chmod -R go= ~/.ssh
+chown -R $USER:$USER ~/.ssh
+```
+
+After logging out of the droplet, and now in my new computer, I can test that the SSH stuff worked:
+
+```shell
+ssh <admin_server_username>@<MY_DROPLET_IP_ADDRESS>
+```
+
+It did, and now I can enter the droplet from my new computer **without entering a password**. Pretty cool.
+
+## Conclusion
+
+This blog post has outlined how I moved development of a Django app from one computer to a new macOS computer. It was a pretty hairy experience, as these things tend to be for me as I'm not wholly comfortable in this area of web development. But hopefully it has helped you (or more likely just me when I need to do something similar in future). If you need to ask anything about this post [send me a message](/contact) and I'll be happy to get back to you!
+
+<Spacer size={128} />
