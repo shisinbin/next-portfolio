@@ -1,0 +1,169 @@
+---
+title: 'Making a Partial Backup of a Django app database'
+date: '2025-12-12'
+description: |
+  Ever wondered how to make a partial backup of a PostgreSQL database? How you could make use of shell environments to poke and prod at it safely? How you can then transfer said backup safely across oceans to your computer? Then look no further, the answers all lie within...
+categories: ['general']
+tags: ['Django', 'SSH keys', 'Development', 'macOS', 'PostgreSQL']
+readingTime: 4
+published: true
+---
+
+<Figure
+  src='/images/blog/data_backup.webp'
+  alt='A padlock on top of an open laptop'
+  size='full'
+/>
+
+## Background
+
+When I [earlier set up local development for my Django app](/blog/moving-development-to-new-mac), I wanted my environment to be as close to production as possible. Now I wanted to go further and copy database data, and also images stored in the `media` folder inside the production project root.
+
+To avoid copying sensitive user data, I decided to create a _partial backup_ of the database - excluding user-related tables - and then copy the media files. This post explains exactly how I did that, step by step.
+
+## Inspecting the database
+
+First, I logged into the production server, activated the virtual environment, and went into the project root. From here I could use two shells - the **Python shell**, and the **PostgreSQL shell**.
+
+To see the tables:
+
+```shell
+python manage.py dbshell
+
+<db_name>=> # database shell prompt looks like this
+
+\dt # lists all the tables
+\d books_book # example: describes the book table in the books app
+```
+
+I also checked the models in `models.py` locally to see which tables might contain user data. Another handy method is to inspect foreign keys pointing to the Django `auth.User` table from the Python shell (by running `python manage.py shell`):
+
+```python
+from django.apps import apps
+
+User = apps.get_model("auth", "User")
+
+# find models that have a ForeignKey to auth.User
+related_models = []
+for model in apps.get_models():
+    for field in model._meta.get_fields():
+        if field.is_relation and field.related_model == User:
+            related_models.append((model._meta.label, field.name))
+
+related_models
+```
+
+From here I could see which tables were likely connected to users. I could also optionally check actual data in the production database:
+
+```sql
+SELECT COUNT(*) FROM books_bookinstance2 WHERE borrower_id IS NOT NULL;
+```
+
+I decided to exlucde the following tables (built-in Django user tables and admin logs):
+
+```
+auth_user
+auth_group
+auth_user_groups
+auth_user_user_permissions
+auth_permission
+django_admin_log
+django_content_type
+django_migrations
+django_session
+```
+
+Plus other user-related tables.
+
+## Creating a partial backup
+
+With the tables identified, I ran:
+
+```shell
+sudo -u postgres pg_dump \
+  --format=plain \
+  --data-only \
+  --table=authors_author \
+  --table=books_book \
+  ...
+  --table=easy_thumbnails_thumbnail \
+  --table=easy_thumbnails_thumbnaildimensions \
+  <name_of_db> \
+  > partial_backup.sql
+```
+
+Notes:
+
+- `--data-only` means the dump contains only table contents, not table definitions
+- `sudo -u postgres` ensures we run the command as the PostgreSQL superuser.
+
+Check the file:
+
+```shell
+ls -lh partial_backup.sql
+
+head -n 20 partial_backup.sql
+```
+
+## Transferring the backup to a local machine
+
+I used [SCP (Secure copy protocal)](https://en.wikipedia.org/wiki/Secure_copy_protocol), which lets you securely transfer files over SSH:
+
+```shell
+scp <admin_server_username>@<MY_DROPLET_IP_ADDRESS>:/home/<admin_server_username>/path/to/partial_backup.sql .
+```
+
+The trailing '.' means copy to the current folder, and no `-r` flag because it's a single file.
+
+## Restoring the partial backup locally
+
+Make sure PostgreSQL is running:
+
+```shell
+brew services start postgresql
+```
+
+Restore the data:
+
+```shell
+psql -U <my_macos_username> -d <my_local_db> -f partial_backup.sql
+
+psql -U <my_macos_username> -d <my_local_db> # to inspect the database
+```
+
+Inspect the tables:
+
+```shell
+psql -U <my_macos_username> -d <my_local_db>
+
+# in the sql shell
+SELECT COUNT(*) FROM books_book;
+SELECT COUNT(*) FROM authors_author;
+```
+
+## Copying the media files
+
+Finally, I copied the media folder from the droplet. Here I **do** need the `-r` flag because it's a directory:
+
+```shell
+scp -r <admin_server_username>@<MY_DROPLET_IP_ADDRESS>:/home/<admin_server_username>/<path_to_media_folder>/media ./media
+```
+
+After it finished, I could see all the book images locally.
+
+## Creating a local superuser
+
+The last step was to create a local Django admin account to manage the app:
+
+```shell
+python manage.py createsuperuser
+```
+
+Now I could log into the admin section, from where I could make use of their brilliant built-in admin area to inspect all the data inside.
+
+## Conclusion
+
+This process outlined how I managed to bring over a partial backup of a database in order to help mirror production more closely, without importing sensitive user data. It also highlights a few different ways you can safely check out things in the database and the Django app by using two shell environments.
+Hopefully this has been of some help to anyone who has happened to stumble across this, and as always, if you want to get in touch about anything I've written here, or really anything at all, please don't hesitate to [send me a message](/contact)! No seriously, please do, it's lonely here.
+
+<Spacer size={128} />

@@ -27,11 +27,15 @@ published: true
 
 The quick version: I wanted to move local development for an existing Django web app from one computer to another Mac computer - this is how I did it.
 
-The long version: I built a [Django](https://www.djangoproject.com/) web app several years (when I knew little about web development) and I've long held an idea to refactor its markup and styles to make it more modern, maintainable and reasonable.
+<ExpandableSection title='The long version'>
 
-The Django app web is constantly running inside a [Digital Ocean](https://www.digitalocean.com/) droplet (basically a virtual machine that acts as a production server), and I am able to log into the droplet, either from my local computer or on their site's recovery console, get into the production project folder, run the virtual environment, and then do various things.
+I built a [Django](https://www.djangoproject.com/) web app several years ago (when I knew little about web development) and I've long held the idea to refactor its markup and styles to make it more modern, maintainable and reasonable.
 
-I recently bought a new Mac computer, and so I thought it would be a good time to try and move development of the web app from an older computer to this new one, and in this blog post I'll try to outline what I did and why.
+The production version of the Django web app is constantly running inside a [Digital Ocean](https://www.digitalocean.com/) droplet (basically a virtual machine that acts as a production server). I'm able to log into the droplet, either from my old computer or on their site's recovery console, run the virtual environment and then do various things like pulling changes from GitHub.
+
+I recently bought a new Mac computer, and so I thought it would be a good time to try and move development of the web app from an older computer to this new one in order to attempt refactoring it. This blog post tries to outline what I did and why.
+
+</ExpandableSection>
 
 ## Replicating the production environment
 
@@ -46,7 +50,7 @@ $ ssh <admin_server_username>@<MY_DROPLET_IP_ADDRESS>
 $ source ./venv/bin/activate
 
 (venv) $ python --version
-Python 3.8.10 // output
+Python 3.8.10 # output
 
 (venv) $ pip freeze
 asgiref==3.5.2
@@ -85,13 +89,13 @@ I needed to reload the terminal or source the file to enact the config changes:
 source ~/.zshrc
 ```
 
-Then installed the Python version corresponding to droplet version:
+Then installed the Python version corresponding to the droplet version:
 
 ```shell
 pyenv install 3.8.10
 ```
 
-(You can check what versions you have available with `pyenv versions`)
+This writes a `.python-version` file that I guess sort of plants a flag saying 'Hey, here we only want to work with this version of Python here!', so when we later create a virtual environment, it make sure to do with this version of Python (you can check what Python versions you have available by running `pyenv versions`, where you should see your system version and the newly installed and available version).
 
 ## Cloning the Django Project and Creating the Virtual Environment
 
@@ -115,7 +119,7 @@ python -m venv venv
 source ./venv/bin/activate
 ```
 
-Inside this newly created environment, I can check to make sure which version of python is running inside of it:
+Inside this newly created environment, I checked which version of python is running inside of it:
 
 ```shell
 python --version # output: Python 3.8.10
@@ -131,7 +135,7 @@ At this point we now have a virtual environment that matches the production serv
 
 ## Creating the local database
 
-My Django app uses PostgreSQL. Previously, I needed to download Postgres.app and pgAdmin4 before configuring things. But now it's pretty straightforward to get things set up from the terminal.
+My Django app uses PostgreSQL. Previously, I needed to download Postgres.app and pgAdmin before configuring things. But now it's pretty straightforward to get things set up from the terminal.
 
 I installed PostgreSQL and then started a local database server
 
@@ -146,7 +150,7 @@ I then tried to create a superuser:
 createuser -s $(whoami)
 ```
 
-`whoami` is the token name for your macOS username. This caused an error because I think it automatically creates a superuser using my macOS username, so I don't need to create a new one? Anyway, next I need to create a local DB:
+`whoami` is the token name for your macOS username. This caused an error because I think it automatically created a superuser using my macOS username when I installed postgresql, so I didn't need to create a new one? Anyway, next I need to create a local DB:
 
 ```shell
 createdb my_local_db # name this whatever makes sense
@@ -179,7 +183,7 @@ And some useful commands to use when you're inside the shell (after the db is se
 
 ### Configuring Django app settings
 
-In a Django project, there's an important configuration file called `settings.py`, where amongst other things we set up the connection to the db. At the end of this file in my project, I have this bit of code:
+In a Django project, there's an important configuration file called `settings.py`, where amongst other things we set up the connection to the database. At the end of this file in my project, I have this bit of code:
 
 ```python
 try:
@@ -205,10 +209,10 @@ DATABASES = {
     }
 }
 
-SECRET_KEY = 'dev-secret-key' # doesn't matter what this is
+SECRET_KEY = 'dev-secret-key' # in development, it doesn't matter what this is
 ```
 
-No password is needed because I guess it's wired with macOS peer authentication.
+No password is needed because of peer authentication - the default PostgreSQL configuration trusts local connections from the same system user without requiring a password.
 
 ### Run the Django app locally
 
@@ -224,7 +228,7 @@ Before running the development server:
 python manage.py runserver
 ```
 
-Visiting `http://127.0.0.1:8000/`, I could view the app, where it's running exactly like production.
+Visiting `http://127.0.0.1:8000/`, I could view the app, where it runs exactly like production.
 
 ## Setting up SSH keys
 
@@ -235,7 +239,7 @@ I navigated these (slightly outdated) Digital Ocean guides to help:
 - [Generating Keys With OpenSSH](https://www.digitalocean.com/community/tutorials/how-to-create-ssh-keys-with-openssh-on-macos-or-linux#step-3-generating-keys-with-openssh)
 - [How to add SSH keys to existing droplet](https://docs.digitalocean.com/products/droplets/how-to/add-ssh-keys/to-existing-droplet/#manually)
 
-So, first of all I use the `ssh-keygen` command-line tool to create a matched pair of cryptographic keys (a **public key** and a **private key**) on my Mac:
+First of all I use the `ssh-keygen` command-line tool to create a matched pair of cryptographic keys (a **public key** and a **private key**) on my Mac:
 
 ```shell
 ssh-keygen
@@ -245,7 +249,7 @@ This created two files in my `~/.ssh folder`:
 
 ```shell
 id_ed25519 # private key - never share!
-id.ed25519.pub # public key
+id_ed25519.pub # public key
 ```
 
 I went into the `.pub` file and copied its entire contents, which looks something like this:
@@ -260,7 +264,7 @@ Then I logged into the droplet on my old computer, and opened the `authorized_ke
 $ nano ~/.ssh/authorized_keys
 ```
 
-I pasted the copied SSH key at the end of the file, saved and exited. After that, I needed to "set the permissions and ownership of the files" (I don't really understand what this means, but it's in the Digital Ocean guide):
+I pasted the copied SSH key at the end of the file, saved it and exited. After that, I needed to "set the permissions and ownership of the files" (I don't really understand what this means, but it's in the Digital Ocean guide):
 
 ```shell
 chmod -R go= ~/.ssh
@@ -277,6 +281,6 @@ It did, and now I can enter the droplet from my new computer **without entering 
 
 ## Conclusion
 
-This blog post has outlined how I moved development of a Django app from one computer to a new macOS computer. It was a pretty hairy experience, as these things tend to be for me as I'm not wholly comfortable in this area of web development. But hopefully it has helped you (or more likely just me when I need to do something similar in future). If you need to ask anything about this post [send me a message](/contact) and I'll be happy to get back to you!
+This blog post has outlined how I moved local development of a Django app from one computer to a new Mac computer. It was a pretty hairy experience and not without a fair few stumbling blocks or course corrections (they aren't mentioned here to make things more streamlined and save me some embarassment!). But hopefully reading this guide will make things a little easier for you if you're in the same boar (or more likely just me when I need to do something similar in future). If you need to ask anything about this post [send me a message](/contact) and I'll be happy to get back to you!
 
 <Spacer size={128} />
