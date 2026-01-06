@@ -1,0 +1,431 @@
+---
+title: 'How I Rebuilt a Search System'
+date: '2026-01-06'
+description: |
+  Implementing a good text-based search in a web dev application might initially seem straightforward. You just have to filter one or more fields using a raw string, right? Well, as I learned when trying to refactor an older search system, it can be a lot more complex. Like a hell of a lot more.
+categories: ['general']
+tags:
+  [
+    'Django',
+    'Search',
+    'Python',
+    'Autocomplete',
+    'PostgreSQL',
+    'JavaScript',
+  ]
+readingTime: 11
+published: true
+---
+
+<Figure
+  src='/images/blog/snazzy_search.jpeg'
+  alt='Programmer sitting infront of their laptop, looking stressed'
+  size='full'
+/>
+
+## Background
+
+In the course of refactoring an older Django project involving books, I ended up building a new search system. This comprised of an autocomplete and a main search that had to both complement one another, so that the experience for the user was predictable, responsive, and accessible.
+
+You can study the completed files for yourself in my Github repo [here](https://github.com/shisinbin/barham-books) - it is currently in the 'refactor/ui' branch but will show up in the master branch soon. It consists of the search bar (markup and styles), the frontend JS logic, the Django views (autocomplete, book_search), and a python file of helpers used by the views.
+
+<Callout>
+  Better links for the above paragraph will show up in the future.
+</Callout>
+
+Below I'll try and explain how I did it, for my benefit as much as anyone else's.
+
+## What was the goal?
+
+In my existing Django project, I had a main search and an autocomplete search, but these were both quite different:
+
+```python
+# Autocomplete filtering logic
+books = Book.objects.filter(
+    title__icontains=query,
+    instances__isnull=False).distinct()[:10]
+
+# Main search filtering logic
+search_vector = SearchVector('title', weight='A') + \
+                SearchVector('author__last_name', weight='A') + \
+                SearchVector('author__first_name', weight='B')
+search_query = SearchQuery(query)
+
+results = Book.objects.annotate(
+    search=search_vector,
+    rank=SearchRank(search_vector, search_query)
+).filter(rank__gte=0.3).order_by('-rank').distinct()
+```
+
+Notice how the autocomplete performs a naive title-only text search, while the main book search takes advantage of powerful Postgres tools like `SearchVector`, `SearchQuery` and `SearchRank` to filter and rank across both title _and_ author name.
+
+<Callout>
+  One approach I could have taken here was to study these Postgres
+  tools further, use them to improve the main search, and then make
+  the autocomplete search consistent with how the main search
+  operates. But I wanted to move away from using these tools and
+  instead come up with my own custom-built way of searching titles
+  instead.
+</Callout>
+
+What would often happen then is the autocomplete results would differ from the main search results, sometimes in peculiar ways. This meant the user experience wouldn't be great.
+
+## Unified search model
+
+The unified search system I settled on uses this search filter:
+
+```python
+def build_search_filter(terms, allow_prefix=False):
+    """
+    Build a Q object for searching books.
+    If allow_prefix=True, last term is treated as partial.
+    """
+    query_filter = Q()
+
+    for term in terms[:-1]:
+        forms = plural_forms(term)
+        term_q = Q()
+
+        for f in forms:
+            term_q |= Q(title__icontains=f)
+            term_q |= Q(author__first_name__iexact=f)
+            term_q |= Q(author__last_name__iexact=f)
+
+        query_filter &= term_q
+
+    last = terms[-1]
+    last_forms = plural_forms(last)
+    last_q = Q()
+
+    for f in last_forms:
+        if allow_prefix:
+            last_q |= Q(title__icontains=f)
+            last_q |= Q(author__first_name__istartswith=f)
+            last_q |= Q(author__last_name__istartswith=f)
+        else:
+            last_q |= Q(title__icontains=f)
+            last_q |= Q(author__first_name__iexact=f)
+            last_q |= Q(author__last_name__iexact=f)
+
+    return query_filter & last_q
+```
+
+There is a fair bit to unpack here.
+
+First of all, the function takes in the list `terms` representing each word in a query, e.g. `['quick', 'brown', 'fox'].
+
+This list of terms is then split between the last term and everything else - or rather the 'active' term and the 'completed' terms. We want to do this because how we search the last term for an autocomplete needs to be different from how we search the last term for the main search. That is, the last term should be _fuzzily_ matched to an author name when using autocomplete, whereas in the main search we only want exact matches to author names.
+
+The way in which we distinguish between main search and autocomplete search is via the parameter `allow_prefix` - if it's set to `True` then the autocomplete branch of the logic will run.
+
+The list of terms are iterated over, and within each iteration we consider plurals - for each term we ensure there is both a plural form and a singular form.
+
+<ExpandableSection title="Curious about plurals?">
+
+The helper function below builds a set of two terms - the original term and the most likely plural version (and vice versa). So, if a user searches 'diary', the word 'diaries' will also be included in the search filter, or if a user searches "catches", then "catch" is also included, and so on. The intention was not to overly engineer this kind of function, to try and pick out all the potential edge cases - you don't want to invent words, or be super predictive on what the user is entering.
+
+```python
+def plural_forms(term):
+    """
+    Return possible plural variants for matching
+
+    Assumptions:
+    - term is lowercase
+    - term length >= 3
+    - punctuation already stripped
+    """
+    forms = {term}
+
+    # parties -> party
+    if term.endswith("ies"):
+        base = term[:-3] + "y"
+        if len(base) >= 3:
+            forms.add(base)
+            return forms
+
+    # boxes -> box, wishes -> wish, catches -> catch
+    if term.endswith("es") and term[:-2].endswith(("sh", "ch", "x", "s")):
+        base = term[:-2]
+        if len(base) >= 3:
+            forms.add(base)
+            return forms
+
+    # dogs -> dog (not dress -> dres)
+    if term.endswith("s") and not term.endswith("ss"):
+        base = term[:-1]
+        if len(base) >= 3:
+            forms.add(base)
+            return forms
+
+    # party -> parties
+    if term.endswith("y") and term[-2] not in "aeiou":
+        forms.add(term[:-1] + "ies")
+        return forms
+
+    # glass -> glasses
+    if term.endswith("ss"):
+        forms.add(term + "es")
+        return forms
+
+    # default plural
+    forms.add(term + "s")
+    return forms
+```
+
+</ExpandableSection>
+
+<Spacer size={24} />
+
+For each form we add filters to our query, and pass the combined query filter to the `Book.objects.filter` method:
+
+```python
+q = build_search_filter(terms)
+books_qs = Book.objects.filter(q)
+```
+
+## Normalising the input and using tokens
+
+This has to be done in both the frontend and the backend. The main idea is that the search is based around **meaningful tokens** of a certain minimum length. So, for example, this is how I normalised the input in the frontend:
+
+```js
+const STOPWORDS = ['the', 'and', 'for'];
+
+function normaliseQuery(q) {
+  if (!q) return '';
+
+  return q
+    .toLowerCase()
+    .normalize('NFKD') // normalises accents
+    .replace(/[^\w\s]/g, ' ') // remove special characters
+    .split(/\s+/) // split into words
+    .filter(
+      (word) =>
+        word.length >= 3 && // keeps words >= 3 chars
+        !STOPWORDS.includes(word) // filters stopwords
+    )
+    .join(' ')
+    .trim();
+}
+```
+
+The function above joins the tokens back into a single string because the whole thing has to be sent to the autocomplete endpoint. But in the Django view that handles this request, it does the same normalising, before then leaving the words as tokens so that it can be used to both filter the results but also score them.
+
+## Scoring the results for relevance
+
+This was maybe the most 'fun' part of the process - figuring out a way to score every result the queryset would bring back from the search. It took some thought to work out how best to score them, but it helped to group the scores into a meaningful set, so that i could play around with the order and numbers:
+
+```python
+SCORING_WEIGHTS = {
+    "title_exact_word": 50,
+    "title_startswith": 40,
+    "title_contains": 20,
+    "author_last_exact": 45,
+    "author_last_startswith": 30,
+    "author_first_exact": 20,
+    "author_first_startswith": 10,
+    "multi_term_bonus": 15,
+}
+
+def score_book(book, terms):
+    """Return relevance score for sorting results."""
+    score = 0
+
+    # Pre-process book data
+    title = book.title.lower()
+    title_words = re.findall(r"\w+", title)
+    author_first = (book.author.first_name or "").lower()
+    author_last = (book.author.last_name or "").lower()
+
+    for term in terms:
+        # Title-scoring
+        if term in title_words:
+            score += SCORING_WEIGHTS["title_exact_word"]
+        if title.startswith(term):
+            score += SCORING_WEIGHTS["title_startswith"]
+        if term in title:
+            score += SCORING_WEIGHTS["title_contains"]
+
+        # Author-scoring
+        if term == author_last:
+            score += SCORING_WEIGHTS["author_last_exact"]
+        elif author_last.startswith(term):
+            score += SCORING_WEIGHTS["author_last_startswith"]
+
+        if term == author_first:
+            score += SCORING_WEIGHTS["author_first_exact"]
+        elif author_first.startswith(term):
+            score += SCORING_WEIGHTS["author_first_startswith"]
+
+    # Multi-term bonus
+    if len(terms) > 1:
+        match_count = 0
+        for term in terms:
+            if term in title or term in author_first or term in author_last:
+                match_count += 1
+
+        score += match_count * SCORING_WEIGHTS["multi_term_bonus"]
+
+    return score
+```
+
+In the function above, for a single book result, we iterate through every term and build a score that represents how well that book result matches to the overall query.
+
+We do this for every book result, where we then order the results based on this score:
+
+```python
+scored = []
+for book in books_qs:
+    score = score_book(book, terms)
+    scored.append((score, book))
+
+scored.sort(key=lambda item: (-item[0], item[1].title.lower()))
+```
+
+## Confidently redirecting
+
+I wanted to cater for the scenario where the user's search query is most likely going to be belong to a single book in the database. There are different ways of going about this, but I felt like if there was just a single result left from carrying out a search, we have to find a way to determine if that result was worthy of being redirected straight to the book page itself.
+
+Initially I thought I could piggyback into the `score_book` function, but I found it difficult. That scoring system is specifically designed to rank a group of books, whereas here we are trying to determine if the book is redirect-worthy. So, I needed to come up with a new kind of scoring system, specifically for the scenario where there is only one book result from a search:
+
+```python
+def classify_match(book, terms):
+    """Extract match features used for intent detection."""
+    title = book.title.lower()
+    title_words = set(re.findall(r"\w+", title))
+    author_first = (book.author.first_name or "").lower()
+    author_last = (book.author.last_name or "").lower()
+
+    features = {
+        "title_exact_words": 0,
+        "title_startswith": False,
+        "author_first": False,
+        "author_last": False,
+    }
+
+    for term in terms:
+        if term in title_words:
+            features["title_exact_words"] += 1
+        if title.startswith(term):
+            features["title_startswith"] = True
+        if term == author_first:
+            features["author_first"] = True
+        if term == author_last:
+            features["author_last"] = True
+
+    return features
+
+def is_confident_redirect(book, terms):
+    """Return True if query unambiguously targets this book."""
+    f = classify_match(book, terms);
+
+    if f['title_startswith']:
+        return True
+    elif (
+        f['title_exact_words'] == 1 and
+        (f['author_first'] or f['author_last'])
+    ):
+        return True
+    elif f['author_first'] and f['author_last']:
+        return True
+    elif f['title_exact_words'] >= 2:
+        return True
+    else:
+        return False
+```
+
+So, once again I iterate through every term in the query, (seems like there's a whole lot of iterating going on in the course of just a single search!) but at least it's only for one book.
+
+Basically, I decided the following would meet the criteria for redirecting to the book:
+
+- if the book starts with one of the terms
+- if there is a single match in the title and a single match in either the author first or last name
+- if there is both exact matches for the author's first and last name
+- if there are more than 1 title matches.
+
+So, if there's only a partial match, or if there is only an author surname put in, it's not enough for a redirect and instead the user just see's that single search result on the search results page.
+
+Again, this was another fun exercise to work through, unlike the next one...
+
+## Dealing with autocomplete behaviour in the frontend
+
+Aside from normalising input, there are two important things to consider doing in the frontend while carrying out an autocomplete search.
+
+### Dead-end detection
+
+If a search query produces zero autocomplete results, but the user carries on extending their query, we should not continue hitting that endpoint. Here's what we can do to achieve this behaviour:
+
+1. We need to create some 'state' that helps us monitor the last _effective_ query and whether that query produced results.
+
+   ```js
+   let lastEffectiveQuery = '';
+   let lastHadResults = true; // initialised to true
+   ```
+
+2. Next, in the input `change` event listener, we normalise the new query and check whether the last query returned zero results and new query only extends it - if neither are true, we exit early:
+
+   ```js
+   const effectiveQuery = normaliseQuery(raw);
+   if (
+     !lastHadResults &&
+     effectiveQuery.startsWith(lastEffectiveQuery)
+   ) {
+     return;
+   }
+   ```
+
+3. If we get past this, then we do the fetch and update the state:
+
+   ```js
+   const res = await fetch(
+     `${endpoint}?term=${encodeURIComponent(effectiveQuery)}`,
+     { signal: controller.signal }
+   );
+   const data = await res.json();
+
+   // update state
+   lastEffectiveQuery = effectiveQuery;
+   lastHadResults = data.length > 0;
+   ```
+
+This code helps to detect if a search is in a dead-end, and protects the endpoint from being unnecessarily hit. Two points worth mentioning: if the user begins deleting their query, the database still won't be hit until such time that the query last resembled the last effective query - pretty sweet! The other thing is that it is important to reset the state if the length of the query dips below the minimum lenth range so that the user can begin writing a new query 'afresh'.
+
+### Abort-safe fetch
+
+If a user types really quickly then we want to avoid race conditions, UI flickering and wasted work. So, this is where the Abort-safe fetch mechanism is really useful. The steps are:
+
+1. Wrap up the code in a try-catch block. This is important so that you can swallow the error that is produced when a fetch is aborted.
+2. Create a new AbortController object.
+3. Associate the controller's signal with the fetch's signal.
+
+```js
+let controller;
+...
+try {
+  ...
+
+  controller?.abort(); // abort the last fetch
+  controller = new AbortController();
+
+  const res = await fetch(
+    `${endpoint}?term=${encodeURIComponent(effectiveQuery)}`,
+    { signal: controller.signal }
+  );
+  ...
+
+} catch (err) {
+  // Swallow the AbortError, log other errors to console
+  if (err.name !== 'AbortError') {
+    console.error(err);
+  }
+}
+```
+
+## Summary
+
+So, that about wraps up how I rebuilt the search. I replaced a search system that contained differing approaches into a cohesive, human-aware, intent-aware search system that behaves predictably. Users aren't shown differing results between the autocomplete and main search, except where they should be (fuzzy matching).
+
+I didn't mention the accessibility stuff, which is important, nor did I get too much into the markup and styles and how they're wired to event listeners (how do you get an autocomplete box to appear under a search bar in an accessibility-driven way I hear you ask - well, maybe I'll save that for another exciting post!).
+
+I also haven't really gone over the process of how I got from where I started to where I finished - suffice it to say I started simple, I allowed the code to be clunky and unorganised, I iterated a lot, did a lot of trial and error, a fair bit of research, and then only towards the end did I organise the code better, refine, and retune little bits here and there. I also accepted my limitations - I didn't even get into stuff like trigrams and stemming!
+
+Anyway, this was a long arduous task, but ultimately really fruitful and edifying. I feel a lot more knowledgeable about some of the key aspects involved in coordinating a good search system. Honestly, even though there is a small part of me that wonders why I didn't just brush up on learning those Postgres tools that can do all of what I managed and a whole heap more, I still feel I gained a lot and ultimately, and most importantly, the search is in a much better place than where it was to better serve the people who will use it.

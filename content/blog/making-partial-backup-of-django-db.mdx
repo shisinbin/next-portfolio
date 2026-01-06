@@ -17,20 +17,20 @@ published: true
 
 ## Background
 
-When I [earlier set up local development for my Django app](/blog/moving-development-to-new-mac), I wanted my environment to be as close to production as possible. Now I wanted to go further and copy database data, and also images stored in the `media` folder inside the production project root.
+When I [earlier set up local development for a Django app](/blog/moving-development-to-new-mac), I wanted my environment to be as close to production as possible. Now I wanted to go further and use a copy of the existing database data, as well as images stored in the project root's `media` folder.
 
 To avoid copying sensitive user data, I decided to create a _partial backup_ of the database - excluding user-related tables - and then copy the media files. This post explains exactly how I did that, step by step.
 
 ## Inspecting the database
 
-First, I logged into the production server, activated the virtual environment, and went into the project root. From here I could use two shells - the **Python shell**, and the **PostgreSQL shell**.
+First, I logged into the production server, activated the virtual environment, and went into the project root folder. From here I could use two shells to help - the **Python shell**, and the **PostgreSQL shell**.
 
 To see the tables:
 
 ```shell
-python manage.py dbshell
+python manage.py dbshell # this runs the PostgreSQL shell
 
-<db_name>=> # database shell prompt looks like this
+<db_name>=> # the shell prompt looks like this
 
 \dt # lists all the tables
 \d books_book # example: describes the book table in the books app
@@ -127,8 +127,6 @@ Restore the data:
 
 ```shell
 psql -U <my_macos_username> -d <my_local_db> -f partial_backup.sql
-
-psql -U <my_macos_username> -d <my_local_db> # to inspect the database
 ```
 
 Inspect the tables:
@@ -164,6 +162,7 @@ Now I could log into the admin section, from where I could make use of their bri
 ## Conclusion
 
 This process outlined how I managed to bring over a partial backup of a database in order to help mirror production more closely, without importing sensitive user data. It also highlights a few different ways you can safely check out things in the database and the Django app by using two shell environments.
+
 Hopefully this has been of some help to anyone who has happened to stumble across this, and as always, if you want to get in touch about anything I've written here, or really anything at all, please don't hesitate to [send me a message](/contact)! No seriously, please do, it's lonely here.
 
 <Spacer size={128} />
